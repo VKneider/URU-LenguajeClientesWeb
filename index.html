@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clase 2 - Índice</title>
+  <style>
+    :root {
+      --primary: #005577;
+      --accent: #0099cc;
+      --bg: #f0f4f8;
+      --text: #333;
+      --card-bg: #ffffff;
+      --border-radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      padding: 1.2rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease;
+      text-align: center;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card a {
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .pdf {
+      border: 2px dashed #cc0000;
+      color: #cc0000;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Clase 2 - Navegación de Contenidos</h1>
+
+  <div class="grid">
+    <div class="card">
+      <a href="Clase2/html-intro/index.html">HTML Intro</a>
+    </div>
+    <div class="card">
+      <a href="Clase2/intro-css/index.html">Introducción a CSS</a>
+    </div>
+    <div class="card">
+      <a href="Clase2/Flexbox/index.html">Flexbox</a>
+    </div>
+    <div class="card">
+      <a href="Clase2/Grid/index.html">Grid</a>
+    </div>
+    <div class="card pdf">
+      <a href="Clase2/Contenido.pdf" target="_blank">📄 Ver Contenido en PDF</a>
+    </div>
+  </div>
+
+</body>
+</html>
