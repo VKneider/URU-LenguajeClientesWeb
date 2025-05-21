@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Completa de CSS Grid</title>
+    <style>
+        :root {
+            --primary-color: #10b981;
+            --primary-dark: #059669;
+            --secondary-color: #0ea5e9;
+            --text-color: #1f2937;
+            --light-bg: #f3f4f6;
+            --code-bg: #f1f5f9;
+            --border-color: #e5e7eb;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #fff;
+            padding-bottom: 40px;
+        }
+
+        header {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        nav {
+            background-color: white;
+            position: sticky;
+            top: 0;
+            padding: 0.5rem;
+            box-shadow: var(--box-shadow);
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background-color: var(--light-bg);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--box-shadow);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h3 {
+            color: var(--text-color);
+            margin: 1.5rem 0 1rem;
+        }
+
+        h4 {
+            color: var(--text-color);
+            margin: 1.2rem 0 0.8rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background-color: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #334155;
+        }
+
+        .example-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .code-example {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .visual-example {
+            flex: 1;
+            min-width: 300px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--light-bg);
+        }
+
+        .note {
+            background-color: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .warning {
+            background-color: #fff7ed;
+            border-left: 4px solid #f97316;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .primary-btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+
+        .primary-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .back-to-top:hover {
+            opacity: 1;
+        }
+
+        /* Estilos específicos para las demostraciones de Grid */
+        .grid-container-demo {
+            display: grid;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            grid-gap: 10px;
+        }
+
+        .grid-item {
+            background-color: #34d399;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid-lines-demo {
+            display: grid;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            grid-gap: 10px;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 80px 80px 80px;
+            position: relative;
+        }
+
+        .grid-lines-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 80px 80px 80px;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .grid-line {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px dashed #10b981;
+        }
+
+        .grid-span-demo {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .grid-col-start-demo {
+            grid-column-start: 2;
+        }
+
+        .grid-row-start-demo {
+            grid-row-start: 2;
+        }
+
+        .grid-col-end-demo {
+            grid-column-end: 4;
+        }
+
+        .grid-area-demo {
+            grid-area: 1 / 2 / 3 / 4;
+        }
+
+        .grid-template-areas-demo {
+            display: grid;
+            grid-template-areas:
+                "header header header"
+                "nav content sidebar"
+                "footer footer footer";
+            grid-template-columns: 150px 1fr 150px;
+            grid-template-rows: auto 1fr auto;
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            min-height: 250px;
+        }
+
+        .header-area {
+            grid-area: header;
+            background-color: #34d399;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .nav-area {
+            grid-area: nav;
+            background-color: #34d399;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .content-area {
+            grid-area: content;
+            background-color: #34d399;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .sidebar-area {
+            grid-area: sidebar;
+            background-color: #34d399;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .footer-area {
+            grid-area: footer;
+            background-color: #34d399;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .fr-demo {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .minmax-demo {
+            display: grid;
+            grid-template-columns: minmax(100px, 200px) 1fr minmax(100px, 200px);
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .repeat-demo {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .auto-fit-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .auto-fill-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .dense-demo {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-flow: dense;
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .dense-demo .grid-item:nth-child(4n+1) {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .grid-justified-items-demo {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            justify-items: center;
+        }
+
+        .grid-justified-items-demo .grid-item {
+            width: 80%;
+            height: 50px;
+        }
+
+        .grid-aligned-items-demo {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            align-items: center;
+            height: 200px;
+        }
+
+        .grid-justified-content-demo {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            justify-content: center;
+        }
+
+        .grid-aligned-content-demo {
+            display: grid;
+            grid-template-rows: repeat(3, 50px);
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            align-content: center;
+            height: 300px;
+        }
+
+        .grid-self-justify-demo {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .grid-self-justify-demo .grid-item {
+            width: 80%;
+        }
+
+        .justify-self-start {
+            justify-self: start;
+        }
+
+        .justify-self-center {
+            justify-self: center;
+        }
+
+        .justify-self-end {
+            justify-self: end;
+        }
+
+        .grid-self-align-demo {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            height: 200px;
+        }
+
+        .align-self-start {
+            align-self: start;
+        }
+
+        .align-self-center {
+            align-self: center;
+        }
+
+        .align-self-end {
+            align-self: end;
+        }
+
+        .interactive-demo {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--light-bg);
+        }
+
+        .code-display {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background-color: #1f2937;
+            color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+
+        .grid-playground {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background-color: #d1fae5;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            min-height: 300px;
+        }
+
+        .playground-item {
+            background-color: #34d399;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .control-btn, .control-select {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .control-btn:hover, .control-select:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .control-select {
+            appearance: none;
+            padding-right: 30px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='18px' height='18px'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            section {
+                padding: 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Guía Completa de CSS Grid</h1>
+        <p class="subtitle">Aprende a crear layouts bidimensionales con CSS Grid</p>
+    </header>
+
+    <nav>
+        <div class="nav-content">
+            <a href="#" class="logo">Grid CSS</a>
+            <ul class="nav-links">
+                <li><a href="#introduccion">Introducción</a></li>
+                <li><a href="#conceptos-basicos">Conceptos Básicos</a></li>
+                <li><a href="#propiedades-contenedor">Propiedades del Contenedor</a></li>
+                <li><a href="#propiedades-items">Propiedades de los Items</a></li>
+                <li><a href="#funciones-especiales">Funciones Especiales</a></li>
+                <li><a href="#ejemplos-practicos">Ejemplos Prácticos</a></li>
+                <li><a href="#conclusiones">Conclusiones</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section id="introduccion">
+            <h2>Introducción a CSS Grid</h2>
+            <p>CSS Grid Layout (o simplemente Grid) es un sistema de diseño bidimensional para la web, que permite crear layouts complejos y responsivos con mayor facilidad y control. A diferencia de otros métodos anteriores, Grid está específicamente diseñado para resolver los problemas de diseño que enfrentamos al crear interfaces web.</p>
+
+            <h3>¿Por qué usar CSS Grid?</h3>
+            <ul>
+                <li>Permite crear layouts bidimensionales (filas y columnas simultáneamente)</li>
+                <li>Ofrece un control preciso sobre la ubicación y tamaño de los elementos</li>
+                <li>Facilita la creación de diseños complejos y asimétricos</li>
+                <li>Simplifica la adaptación de layouts a diferentes tamaños de pantalla</li>
+                <li>Reduce la necesidad de contenedores anidados y hacks CSS</li>
+            </ul>
+
+            <div class="note">
+                <p><strong>Nota:</strong> Grid es complementario a Flexbox, no un reemplazo. Mientras que Flexbox está diseñado para layouts unidimensionales (en una fila o columna), Grid se especializa en layouts bidimensionales (filas y columnas simultáneamente).</p>
+            </div>
+        </section>
+
+        <section id="conceptos-basicos">
+            <h2>Conceptos Básicos de Grid</h2>
+            <p>Para trabajar con CSS Grid, es importante entender su terminología y conceptos fundamentales.</p>
+
+            <h3>Terminología clave</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Crear un contenedor grid */
+.contenedor {
+    display: grid;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <ul>
+                        <li><strong>Grid Container (Contenedor Grid):</strong> El elemento padre al que se le aplica <code>display: grid</code>.</li>
+                        <li><strong>Grid Items (Elementos Grid):</strong> Los hijos directos del contenedor grid.</li>
+                        <li><strong>Grid Lines (Líneas Grid):</strong> Las líneas divisorias horizontales y verticales que forman la estructura de la cuadrícula.</li>
+                        <li><strong>Grid Tracks (Pistas Grid):</strong> El espacio entre dos líneas grid adyacentes, ya sean columnas (verticales) o filas (horizontales).</li>
+                        <li><strong>Grid Cell (Celda Grid):</strong> El espacio entre cuatro líneas grid adyacentes, es la unidad más pequeña del grid.</li>
+                        <li><strong>Grid Area (Área Grid):</strong> Cualquier rectángulo formado por cuatro líneas grid, puede contener una o más celdas.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Anatomía de un Grid</h3>
+            <p>Un grid está compuesto por líneas, pistas, celdas y áreas.</p>
+
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 80px 80px 80px;
+    gap: 10px;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div class="grid-lines-demo">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                        <div class="grid-item">7</div>
+                        <div class="grid-item">8</div>
+                        <div class="grid-item">9</div>
+                        
+                        <div class="grid-lines-overlay">
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                        </div>
+                    </div>
+                    <p>En este ejemplo:</p>
+                    <ul>
+                        <li>Hay 4 líneas horizontales y 4 líneas verticales</li>
+                        <li>Hay 3 pistas de columna y 3 pistas de fila</li>
+                        <li>Hay 9 celdas (3x3)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="propiedades-contenedor">
+            <h2>Propiedades del Contenedor Grid</h2>
+            <p>Estas propiedades se aplican al contenedor grid (elemento padre) y definen la estructura básica del grid.</p>
+
+            <h3>display: grid</h3>
+            <p>Define un contenedor grid en bloque.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.contenedor {
+    display: grid;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div class="grid-container-demo" style="grid-template-columns: 1fr 1fr 1fr;">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>display: inline-grid</h3>
+            <p>Define un contenedor grid en línea (el contenedor en sí se comporta como un elemento inline).</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.contenedor {
+    display: inline-grid;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <span style="display: inline-grid; grid-template-columns: 1fr 1fr; gap: 10px; background-color: #d1fae5; padding: 10px; border-radius: 5px;">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                    </span>
+                    <span style="display: inline-grid; grid-template-columns: 1fr 1fr; gap: 10px; background-color: #d1fae5; padding: 10px; border-radius: 5px; margin-left: 10px;">
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                        <div class="grid-item">7</div>
+                        <div class="grid-item">8</div>
+                    </span>
+                </div>
+            </div>
+
+            <h3>grid-template-columns y grid-template-rows</h3>
+            <p>Definen las columnas y filas del grid con una lista de valores que especifican el tamaño de cada pista.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Tres columnas: 100px, 200px, 100px */
+.columnas {
+    grid-template-columns: 100px 200px 100px;
+}
+
+/* Dos filas: 80px, 200px */
+.filas {
+    grid-template-rows: 80px 200px;
+}
+
+/* Usando fracciones (fr) */
+.fracciones {
+    grid-template-columns: 1fr 2fr 1fr;
+}
+
+/* Mezclando unidades */
+.mixta {
+    grid-template-columns: 100px 1fr 10%;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>grid-template-columns: 100px 200px 100px;</strong></p>
+                    <div class="grid-container-demo" style="grid-template-columns: 100px 200px 100px;">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                    </div>
+
+                    <p><strong>grid-template-columns: 1fr 2fr 1fr;</strong></p>
+                    <div class="grid-container-demo fr-demo">
+                        <div class="grid-item">1fr</div>
+                        <div class="grid-item">2fr</div>
+                        <div class="grid-item">1fr</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>grid-template-areas</h3>
+            <p>Define áreas con nombre dentro del grid, proporcionando una visualización más clara del layout.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.container {
+    display: grid;
+    grid-template-areas:
+        "header header header"
+        "nav content sidebar"
+        "footer footer footer";
+    grid-template-columns: 150px 1fr 150px;
+    grid-template-rows: auto 1fr auto;
+}
+
+.header { grid-area: header; }
+.nav { grid-area: nav; }
+.content { grid-area: content; }
+.sidebar { grid-area: sidebar; }
+.footer { grid-area: footer; }</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div class="grid-template-areas-demo">
+                        <div class="header-area">Header</div>
+                        <div class="nav-area">Nav</div>
+                        <div class="content-area">Contenido</div>
+                        <div class="sidebar-area">Sidebar</div>
+                        <div class="footer-area">Footer</div>
+                    </div>
+                    <p>Este es un layout clásico de página web con header, footer, nav, contenido y sidebar.</p>
+                </div>
+            </div>
+
+            <h3>grid-template</h3>
+            <p>Propiedad abreviada para grid-template-rows, grid-template-columns y grid-template-areas.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.container {
+    grid-template:
+        "header header header" auto
+        "nav content sidebar" 1fr
+        "footer footer footer" auto
+        / 150px 1fr 150px;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>Es equivalente al ejemplo anterior de grid-template-areas, pero más conciso.</p>
+                    <p>La sintaxis es:</p>
+                    <pre><code>grid-template:
+    "[áreas de la fila 1]" [altura de la fila 1]
+    "[áreas de la fila 2]" [altura de la fila 2]
+    ...
+    / [ancho de columna 1] [ancho de columna 2] ...</code></pre>
+                </div>
+            </div>
+
+            <h3>gap, column-gap y row-gap</h3>
+            <p>Definen el espacio entre filas y columnas del grid.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Espacio entre columnas */
+.col-gap {
+    column-gap: 20px;
+}
+
+/* Espacio entre filas */
+.row-gap {
+    row-gap: 10px;
+}
+
+/* Propiedad abreviada (fila columna) */
+.gap {
+    gap: 10px 20px;
+}
+
+/* Valor único aplica a filas y columnas */
+.gap-equal {
+    gap: 15px;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>gap: 20px;</strong></p>
+                    <div class="grid-container-demo" style="grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                    </div>
+                    
+                    <p><strong>column-gap: 30px; row-gap: 10px;</strong></p>
+                    <div class="grid-container-demo" style="grid-template-columns: 1fr 1fr 1fr; column-gap: 30px; row-gap: 10px;">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>justify-items y align-items</h3>
+            <p>Controlan la alineación de los grid items dentro de sus celdas en el eje horizontal (justify-items) y vertical (align-items).</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Alineación horizontal */
+.container {
+    justify-items: start | end | center | stretch;
+}
+
+/* Alineación vertical */
+.container {
+    align-items: start | end | center | stretch;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>justify-items: center;</strong></p>
+                    <div class="grid-justified-items-demo">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                    </div>
+                    
+                    <p><strong>align-items: center;</strong></p>
+                    <div class="grid-aligned-items-demo">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>justify-content y align-content</h3>
+            <p>Controlan la alineación del grid completo dentro del contenedor cuando el grid es más pequeño que su contenedor.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Alineación horizontal del grid */
+.container {
+    justify-content: start | end | center |
+                     stretch | space-around |
+                     space-between | space-evenly;
+}
+
+/* Alineación vertical del grid */
+.container {
+    align-content: start | end | center |
+                   stretch | space-around |
+                   space-between | space-evenly;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>justify-content: center;</strong></p>
+                    <div class="grid-justified-content-demo">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                    </div>
+                    
+                    <p><strong>align-content: center;</strong></p>
+                    <div class="grid-aligned-content-demo">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>grid-auto-columns y grid-auto-rows</h3>
+            <p>Especifican el tamaño de las pistas generadas automáticamente cuando se colocan elementos en posiciones no definidas explícitamente.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Filas automáticas de 100px */
+.container {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 100px;
+}
+
+/* Columnas automáticas de mínimo 100px */
+.container {
+    grid-template-rows: 100px 100px;
+    grid-auto-columns: minmax(100px, auto);
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>grid-template-columns: 1fr 1fr; grid-auto-rows: 80px;</strong></p>
+                    <div class="grid-container-demo" style="grid-template-columns: 1fr 1fr; grid-auto-rows: 80px;">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                    </div>
+                    <p>Las filas se crean automáticamente según sea necesario, todas con 80px de altura.</p>
+                </div>
+            </div>
+
+            <h3>grid-auto-flow</h3>
+            <p>Controla cómo se colocan automáticamente los elementos en el grid que no tienen una posición explícita.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Valores posibles */
+.container {
+    grid-auto-flow: row | column | row dense | column dense;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>grid-auto-flow: dense;</strong> (rellena huecos automáticamente)</p>
+                    <div class="dense-demo">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                        <div class="grid-item">7</div>
+                        <div class="grid-item">8</div>
+                        <div class="grid-item">9</div>
+                    </div>
+                    <p>El valor 'dense' intenta llenar todos los espacios vacíos con elementos posteriores más pequeños, lo que puede cambiar el orden visual.</p>
+                </div>
+            </div>
+
+            <h3>grid</h3>
+            <p>Propiedad abreviada para establecer todas las propiedades grid en una sola declaración.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Ejemplo completo */
+.container {
+    grid: 100px 300px / 3fr 1fr;
+}
+
+/* Equivalente a */
+.container {
+    grid-template-rows: 100px 300px;
+    grid-template-columns: 3fr 1fr;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>La sintaxis puede ser más compleja para incluir todas las propiedades grid, pero esta es la forma básica.</p>
+                    <p>Un grid más complejo podría ser:</p>
+                    <pre><code>grid:
+    [row1-start] "header header" 50px [row1-end]
+    [row2-start] "sidebar content" 1fr [row2-end]
+    / 150px 1fr;</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="propiedades-items">
+            <h2>Propiedades de los Grid Items</h2>
+            <p>Estas propiedades se aplican a los elementos hijos del contenedor grid (los grid items) y controlan su posición y tamaño dentro del grid.</p>
+
+            <h3>grid-column-start, grid-column-end, grid-row-start y grid-row-end</h3>
+            <p>Especifican la posición del item dentro del grid, haciendo referencia a las líneas del grid.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Posicionar un elemento desde la línea 1 
+   hasta la línea 3 en la columna */
+.item {
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+
+/* Posicionar un elemento desde la línea 2 
+   en la fila */
+.item {
+    grid-row-start: 2;
+}
+
+/* Usar números negativos para contar desde el final */
+.item {
+    grid-column-start: -3;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>grid-column-start: 2;</strong></p>
+                    <div class="grid-container-demo" style="grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 80px 80px;">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item grid-col-start-demo">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                    </div>
+                    
+                    <p><strong>grid-column-end: 4;</strong></p>
+                    <div class="grid-container-demo" style="grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 80px 80px;">
+                        <div class="grid-item grid-col-end-demo">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>grid-column y grid-row</h3>
+            <p>Propiedades abreviadas para grid-column-start/end y grid-row-start/end.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Sintaxis: start / end */
+.item {
+    grid-column: 1 / 3;
+    grid-row: 2 / 4;
+}
+
+/* Usando la palabra clave span */
+.item {
+    grid-column: 1 / span 2; /* Abarca 2 columnas */
+    grid-row: span 2; /* Abarca 2 filas */
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>grid-column: span 2; grid-row: span 2;</strong></p>
+                    <div class="grid-container-demo" style="grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 80px 80px 80px;">
+                        <div class="grid-item grid-span-demo">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                        <div class="grid-item">7</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>grid-area</h3>
+            <p>Especifica el área del grid en la que se colocará un elemento, ya sea haciendo referencia a un nombre definido en grid-template-areas o proporcionando las líneas grid directamente.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Usando un nombre de área */
+.item {
+    grid-area: header;
+}
+
+/* Usando líneas grid: row-start / col-start / 
+   row-end / col-end */
+.item {
+    grid-area: 1 / 2 / 3 / 4;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>grid-area: 1 / 2 / 3 / 4;</strong></p>
+                    <div class="grid-container-demo" style="grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 80px 80px 80px;">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item grid-area-demo">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                        <div class="grid-item">7</div>
+                        <div class="grid-item">8</div>
+                        <div class="grid-item">9</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>justify-self y align-self</h3>
+            <p>Permiten sobrescribir la alineación establecida por justify-items y align-items para un item específico.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Alineación horizontal individual */
+.item {
+    justify-self: start | end | center | stretch;
+}
+
+/* Alineación vertical individual */
+.item {
+    align-self: start | end | center | stretch;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>justify-self:</strong></p>
+                    <div class="grid-self-justify-demo">
+                        <div class="grid-item justify-self-start">start</div>
+                        <div class="grid-item justify-self-center">center</div>
+                        <div class="grid-item justify-self-end">end</div>
+                    </div>
+                    
+                    <p><strong>align-self:</strong></p>
+                    <div class="grid-self-align-demo">
+                        <div class="grid-item align-self-start">start</div>
+                        <div class="grid-item align-self-center">center</div>
+                        <div class="grid-item align-self-end">end</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>place-self</h3>
+            <p>Propiedad abreviada para align-self y justify-self.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Sintaxis: align-self justify-self */
+.item {
+    place-self: center;        /* Ambos center */
+    place-self: center start;  /* Vertical center, horizontal start */
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>place-self: center start;</strong></p>
+                    <div class="grid-container-demo" style="grid-template-columns: 1fr 1fr 1fr; height: 200px;">
+                        <div class="grid-item" style="place-self: center start; width: 80%;">place-self: center start</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="funciones-especiales">
+            <h2>Funciones Especiales de Grid</h2>
+            <p>CSS Grid ofrece varias funciones especiales que proporcionan un control más flexible sobre el tamaño y la disposición de los tracks del grid.</p>
+
+            <h3>La unidad fr (fracción)</h3>
+            <p>La unidad fr representa una fracción del espacio disponible en el grid.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Tres columnas con proporciones 1:2:1 */
+.container {
+    grid-template-columns: 1fr 2fr 1fr;
+}
+
+/* Una columna fija y una que toma el resto */
+.container {
+    grid-template-columns: 200px 1fr;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>grid-template-columns: 1fr 2fr 1fr;</strong></p>
+                    <div class="fr-demo">
+                        <div class="grid-item">1fr</div>
+                        <div class="grid-item">2fr</div>
+                        <div class="grid-item">1fr</div>
+                    </div>
+                    <p>La segunda columna ocupa el doble de espacio que las otras.</p>
+                </div>
+            </div>
+
+            <h3>La función minmax()</h3>
+            <p>Define un rango de tamaño entre un mínimo y un máximo para un track de grid.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Columnas que tienen al menos 100px 
+   pero se expanden hasta 200px */
+.container {
+    grid-template-columns: 
+        minmax(100px, 200px) 1fr minmax(100px, 200px);
+}
+
+/* Filas que tienen al menos 100px y 
+   crecen según el contenido */
+.container {
+    grid-auto-rows: minmax(100px, auto);
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>grid-template-columns: minmax(100px, 200px) 1fr minmax(100px, 200px);</strong></p>
+                    <div class="minmax-demo">
+                        <div class="grid-item">minmax(100px, 200px)</div>
+                        <div class="grid-item">1fr</div>
+                        <div class="grid-item">minmax(100px, 200px)</div>
+                    </div>
+                    <p>Las columnas primera y tercera tienen mínimo 100px y máximo 200px.</p>
+                </div>
+            </div>
+
+            <h3>La función repeat()</h3>
+            <p>Permite repetir patrones de tracks, simplificando la definición de grids con muchas columnas o filas similares.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* 4 columnas iguales */
+.container {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* Patrón repetido */
+.container {
+    grid-template-columns: repeat(3, 100px 1fr);
+}
+
+/* Combinación con otras definiciones */
+.container {
+    grid-template-columns: 200px repeat(2, 1fr) 200px;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>grid-template-columns: repeat(4, 1fr);</strong></p>
+                    <div class="repeat-demo">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                    </div>
+                    <p>Crea 4 columnas de igual tamaño.</p>
+                </div>
+            </div>
+
+            <h3>auto-fit y auto-fill</h3>
+            <p>Valores especiales para la función repeat() que crean grids responsivos automáticamente.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Llena el espacio con tantas columnas como quepan */
+.auto-fill {
+    grid-template-columns: 
+        repeat(auto-fill, minmax(100px, 1fr));
+}
+
+/* Similar a auto-fill, pero colapsa las columnas vacías */
+.auto-fit {
+    grid-template-columns: 
+        repeat(auto-fit, minmax(100px, 1fr));
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>auto-fill:</strong> (mantiene el tamaño de las columnas, creando columnas vacías si es necesario)</p>
+                    <div class="auto-fill-demo">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                    </div>
+                    
+                    <p><strong>auto-fit:</strong> (expande las columnas para ocupar todo el espacio disponible)</p>
+                    <div class="auto-fit-demo">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                    </div>
+                    
+                    <p>Intenta cambiar el tamaño de tu ventana para ver cómo responden ambos ejemplos.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="ejemplos-practicos">
+            <h2>Ejemplos Prácticos de Grid</h2>
+            <p>A continuación, veremos algunos patrones de diseño comunes que muestran el poder de CSS Grid.</p>
+
+            <h3>Layout de Galería de Imágenes Responsiva</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.galeria {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.galeria-item {
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.galeria-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;">
+                        <div style="background-color: #34d399; border-radius: 5px; padding-top: 100%; position: relative;">
+                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white;">1</span>
+                        </div>
+                        <div style="background-color: #34d399; border-radius: 5px; padding-top: 100%; position: relative;">
+                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white;">2</span>
+                        </div>
+                        <div style="background-color: #34d399; border-radius: 5px; padding-top: 100%; position: relative;">
+                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white;">3</span>
+                        </div>
+                        <div style="background-color: #34d399; border-radius: 5px; padding-top: 100%; position: relative;">
+                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white;">4</span>
+                        </div>
+                        <div style="background-color: #34d399; border-radius: 5px; padding-top: 100%; position: relative;">
+                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white;">5</span>
+                        </div>
+                        <div style="background-color: #34d399; border-radius: 5px; padding-top: 100%; position: relative;">
+                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white;">6</span>
+                        </div>
+                    </div>
+                    <p>Esta galería se adapta automáticamente al ancho disponible, mostrando más o menos columnas según el espacio.</p>
+                </div>
+            </div>
+
+            <h3>Diseño de Dashboard</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto 1fr 1fr auto;
+    grid-template-areas:
+        "header header header header"
+        "sidebar main main main"
+        "sidebar stats stats stats"
+        "footer footer footer footer";
+    min-height: 100vh;
+    gap: 16px;
+}
+
+.header { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+.main { grid-area: main; }
+.stats { grid-area: stats; }
+.footer { grid-area: footer; }
+
+@media (max-width: 768px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "header"
+            "main"
+            "sidebar"
+            "stats"
+            "footer";
+    }
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: auto 1fr 1fr auto; grid-template-areas: 'header header header header' 'sidebar main main main' 'sidebar stats stats stats' 'footer footer footer footer'; gap: 10px; height: 400px; border: 1px solid #e5e7eb; padding: 10px; border-radius: 5px;">
+                        <div style="grid-area: header; background-color: #34d399; padding: 10px; text-align: center; color: white; border-radius: 4px;">Header</div>
+                        <div style="grid-area: sidebar; background-color: #34d399; padding: 10px; text-align: center; color: white; border-radius: 4px;">Sidebar</div>
+                        <div style="grid-area: main; background-color: #34d399; padding: 10px; text-align: center; color: white; border-radius: 4px;">Main Content</div>
+                        <div style="grid-area: stats; background-color: #34d399; padding: 10px; text-align: center; color: white; border-radius: 4px;">Statistics</div>
+                        <div style="grid-area: footer; background-color: #34d399; padding: 10px; text-align: center; color: white; border-radius: 4px;">Footer</div>
+                    </div>
+                    <p>Este layout es adaptable y se reorganiza en pantallas pequeñas para mostrar una columna.</p>
+                </div>
+            </div>
+
+            <h3>Diseño de Tarjetas con Diferentes Tamaños</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.masonry {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.card-large {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.card-wide {
+    grid-column: span 2;
+}
+
+.card-tall {
+    grid-row: span 2;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                        <div style="grid-column: span 2; grid-row: span 2; background-color: #34d399; padding: 20px; text-align: center; color: white; border-radius: 4px;">Card Large</div>
+                        <div style="background-color: #34d399; padding: 20px; text-align: center; color: white; border-radius: 4px;">Card</div>
+                        <div style="background-color: #34d399; padding: 20px; text-align: center; color: white; border-radius: 4px;">Card</div>
+                        <div style="grid-column: span 2; background-color: #34d399; padding: 20px; text-align: center; color: white; border-radius: 4px;">Card Wide</div>
+                        <div style="background-color: #34d399; padding: 20px; text-align: center; color: white; border-radius: 4px;">Card</div>
+                    </div>
+                    <p>Este patrón permite crear diseños tipo masonry o tablero de Pinterest con tarjetas de diferentes tamaños.</p>
+                </div>
+            </div>
+
+            <h3>Playground Interactivo</h3>
+            <div class="interactive-demo">
+                <h4>Experimenta con las propiedades de Grid</h4>
+                <div class="control-panel">
+                    <select class="control-select" id="grid-columns" onchange="updateGridColumns()">
+                        <option value="1fr 1fr 1fr">1fr 1fr 1fr</option>
+                        <option value="100px 1fr 100px">100px 1fr 100px</option>
+                        <option value="1fr 2fr 1fr">1fr 2fr 1fr</option>
+                        <option value="repeat(4, 1fr)">repeat(4, 1fr)</option>
+                        <option value="repeat(auto-fill, minmax(100px, 1fr))">auto-fill</option>
+                    </select>
+                    <select class="control-select" id="grid-gap" onchange="updateGridGap()">
+                        <option value="10px">gap: 10px</option>
+                        <option value="20px">gap: 20px</option>
+                        <option value="30px">gap: 30px</option>
+                    </select>
+                    <select class="control-select" id="justify-items" onchange="updateJustifyItems()">
+                        <option value="stretch">justify-items: stretch</option>
+                        <option value="start">justify-items: start</option>
+                        <option value="center">justify-items: center</option>
+                        <option value="end">justify-items: end</option>
+                    </select>
+                    <select class="control-select" id="align-items" onchange="updateAlignItems()">
+                        <option value="stretch">align-items: stretch</option>
+                        <option value="start">align-items: start</option>
+                        <option value="center">align-items: center</option>
+                        <option value="end">align-items: end</option>
+                    </select>
+                    <button class="control-btn" onclick="spanItem()">Span Item 1</button>
+                    <button class="control-btn" onclick="resetItems()">Reset Items</button>
+                </div>
+
+                <div class="grid-playground" id="grid-playground">
+                    <div class="playground-item" id="item1">1</div>
+                    <div class="playground-item" id="item2">2</div>
+                    <div class="playground-item" id="item3">3</div>
+                    <div class="playground-item" id="item4">4</div>
+                    <div class="playground-item" id="item5">5</div>
+                    <div class="playground-item" id="item6">6</div>
+                </div>
+
+                <div class="code-display" id="code-display">
+                    .grid-container {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr 1fr;
+                        gap: 10px;
+                        justify-items: stretch;
+                        align-items: stretch;
+                    }
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusiones">
+            <h2>Conclusiones y Buenas Prácticas</h2>
+            <p>CSS Grid ha revolucionado la forma en que creamos layouts para la web, proporcionando un control sin precedentes sobre el diseño bidimensional.</p>
+
+            <h3>Ventajas de CSS Grid</h3>
+            <ul>
+                <li>Control preciso sobre filas y columnas simultáneamente</li>
+                <li>Facilidad para crear diseños complejos y asimétricos</li>
+                <li>Alineación perfecta tanto horizontal como vertical</li>
+                <li>Flexibilidad para adaptarse a diferentes tamaños de pantalla</li>
+                <li>Reducción significativa de la complejidad del código HTML</li>
+            </ul>
+
+            <h3>Buenas prácticas al usar CSS Grid</h3>
+            <ol>
+                <li><strong>Usa nombres significativos para las áreas</strong> en grid-template-areas para mejorar la legibilidad y mantenimiento.</li>
+                <li><strong>Combina Grid con Flexbox</strong> según sea apropiado. Grid para el layout general, Flexbox para alineación dentro de las secciones.</li>
+                <li><strong>Aprovecha auto-fit y auto-fill con minmax</strong> para crear layouts responsivos sin necesidad de media queries.</li>
+                <li><strong>Utiliza fr en lugar de porcentajes</strong> para distribuciones proporcionales más sencillas.</li>
+                <li><strong>Considera la accesibilidad</strong> al cambiar el orden visual del contenido. El orden del DOM sigue siendo importante para los lectores de pantalla.</li>
+                <li><strong>Prueba en diferentes navegadores</strong> para asegurar la compatibilidad.</li>
+            </ol>
+
+            <h3>CSS Grid vs. Flexbox: Cuándo usar cada uno</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <h4>Usa Grid cuando:</h4>
+                    <ul>
+                        <li>Necesites control sobre filas y columnas simultáneamente</li>
+                        <li>El diseño sea complejo y bidimensional</li>
+                        <li>Quieras definir áreas explícitas en tu layout</li>
+                        <li>Necesites alinear elementos en ambas direcciones</li>
+                    </ul>
+                </div>
+                <div class="visual-example">
+                    <h4>Usa Flexbox cuando:</h4>
+                    <ul>
+                        <li>Necesites un flujo lineal (una fila o columna)</li>
+                        <li>El diseño deba adaptarse principalmente al contenido</li>
+                        <li>Necesites distribuir espacio entre elementos similares</li>
+                        <li>Estés trabajando con componentes más pequeños de la interfaz</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="note">
+                <p><strong>Nota final:</strong> CSS Grid y Flexbox son herramientas complementarias. En proyectos reales, normalmente usarás ambos: Grid para definir la estructura general de la página y Flexbox para componentes específicos dentro de esa estructura.</p>
+            </div>
+        </section>
+    </main>
+
+    <a href="#" class="back-to-top">↑</a>
+
+    <script>
+        // Script para manejar el scroll suave al hacer clic en los enlaces de navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Funciones para el playground interactivo
+        function updateGridColumns() {
+            const value = document.getElementById('grid-columns').value;
+            document.getElementById('grid-playground').style.gridTemplateColumns = value;
+            updateCodeDisplay();
+        }
+
+        function updateGridGap() {
+            const value = document.getElementById('grid-gap').value;
+            document.getElementById('grid-playground').style.gap = value;
+            updateCodeDisplay();
+        }
+
+        function updateJustifyItems() {
+            const value = document.getElementById('justify-items').value;
+            document.getElementById('grid-playground').style.justifyItems = value;
+            updateCodeDisplay();
+        }
+
+        function updateAlignItems() {
+            const value = document.getElementById('align-items').value;
+            document.getElementById('grid-playground').style.alignItems = value;
+            updateCodeDisplay();
+        }
+
+        function spanItem() {
+            const item = document.getElementById('item1');
+            if (item.style.gridColumn === 'span 2' && item.style.gridRow === 'span 2') {
+                item.style.gridColumn = '';
+                item.style.gridRow = '';
+            } else {
+                item.style.gridColumn = 'span 2';
+                item.style.gridRow = 'span 2';
+            }
+            updateCodeDisplay();
+        }
+
+        function resetItems() {
+            const items = document.querySelectorAll('.playground-item');
+            items.forEach(item => {
+                item.style.gridColumn = '';
+                item.style.gridRow = '';
+            });
+            updateCodeDisplay();
+        }
+
+        function updateCodeDisplay() {
+            const playground = document.getElementById('grid-playground');
+            const styles = window.getComputedStyle(playground);
+            const item1 = document.getElementById('item1');
+            
+            let itemCode = '';
+            if (item1.style.gridColumn || item1.style.gridRow) {
+                itemCode = `\n\n.item1 {
+    grid-column: ${item1.style.gridColumn || 'auto'};
+    grid-row: ${item1.style.gridRow || 'auto'};
+}`;
+            }
+            
+            document.getElementById('code-display').textContent = `.grid-container {
+    display: grid;
+    grid-template-columns: ${styles.gridTemplateColumns};
+    gap: ${styles.gap};
+    justify-items: ${styles.justifyItems};
+    align-items: ${styles.alignItems};
+}${itemCode}`;
+        }
+    </script>
+</body>
+</html>

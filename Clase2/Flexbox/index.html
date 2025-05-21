@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Completa de CSS Flexbox</title>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #ec4899;
+            --text-color: #1f2937;
+            --light-bg: #f3f4f6;
+            --code-bg: #f1f5f9;
+            --border-color: #e5e7eb;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #fff;
+            padding-bottom: 40px;
+        }
+
+        header {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        nav {
+            background-color: white;
+            position: sticky;
+            top: 0;
+            padding: 0.5rem;
+            box-shadow: var(--box-shadow);
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background-color: var(--light-bg);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--box-shadow);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h3 {
+            color: var(--text-color);
+            margin: 1.5rem 0 1rem;
+        }
+
+        h4 {
+            color: var(--text-color);
+            margin: 1.2rem 0 0.8rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background-color: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #334155;
+        }
+
+        .example-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .code-example {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .visual-example {
+            flex: 1;
+            min-width: 300px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--light-bg);
+        }
+
+        .note {
+            background-color: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .warning {
+            background-color: #fff7ed;
+            border-left: 4px solid #f97316;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .primary-btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+
+        .primary-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .back-to-top:hover {
+            opacity: 1;
+        }
+
+        /* Estilos específicos para las demostraciones de Flexbox */
+        .flex-container-demo {
+            display: flex;
+            background-color: #e0e7ff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            min-height: 100px;
+        }
+
+        .flex-row {
+            flex-direction: row;
+        }
+
+        .flex-column {
+            flex-direction: column;
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        .flex-nowrap {
+            flex-wrap: nowrap;
+        }
+
+        .justify-start {
+            justify-content: flex-start;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .justify-end {
+            justify-content: flex-end;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .justify-around {
+            justify-content: space-around;
+        }
+
+        .justify-evenly {
+            justify-content: space-evenly;
+        }
+
+        .align-start {
+            align-items: flex-start;
+        }
+
+        .align-center {
+            align-items: center;
+        }
+
+        .align-end {
+            align-items: flex-end;
+        }
+
+        .align-stretch {
+            align-items: stretch;
+        }
+
+        .align-baseline {
+            align-items: baseline;
+        }
+
+        .flex-item {
+            background-color: #818cf8;
+            color: white;
+            padding: 15px;
+            margin: 5px;
+            border-radius: 4px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-1 {
+            order: 1;
+        }
+
+        .order-2 {
+            order: 2;
+        }
+
+        .order-3 {
+            order: 3;
+        }
+
+        .flex-grow-1 {
+            flex-grow: 1;
+        }
+
+        .flex-grow-2 {
+            flex-grow: 2;
+        }
+
+        .flex-shrink-0 {
+            flex-shrink: 0;
+        }
+
+        .flex-shrink-1 {
+            flex-shrink: 1;
+        }
+
+        .align-self-start {
+            align-self: flex-start;
+        }
+
+        .align-self-center {
+            align-self: center;
+        }
+
+        .align-self-end {
+            align-self: flex-end;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .control-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .control-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .different-heights .flex-item:nth-child(odd) {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .different-baselines .flex-item:nth-child(odd) {
+            font-size: 24px;
+        }
+
+        .flex-basis-demo .flex-item:nth-child(1) {
+            flex-basis: 100px;
+        }
+
+        .flex-basis-demo .flex-item:nth-child(2) {
+            flex-basis: 200px;
+        }
+
+        .flex-basis-demo .flex-item:nth-child(3) {
+            flex-basis: auto;
+        }
+
+        .flex-shorthand-demo .flex-item:nth-child(1) {
+            flex: 1;
+        }
+
+        .flex-shorthand-demo .flex-item:nth-child(2) {
+            flex: 2;
+        }
+
+        .flex-shorthand-demo .flex-item:nth-child(3) {
+            flex: 0 0 200px;
+        }
+
+        .interactive-demo {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--light-bg);
+        }
+
+        .code-display {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background-color: #1f2937;
+            color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+
+        .flex-playground {
+            display: flex;
+            min-height: 200px;
+            background-color: #e0e7ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .playground-item {
+            background-color: #818cf8;
+            color: white;
+            padding: 15px;
+            margin: 5px;
+            border-radius: 4px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            section {
+                padding: 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Guía Completa de CSS Flexbox</h1>
+        <p class="subtitle">Aprende a crear diseños flexibles y responsivos con Flexbox</p>
+    </header>
+
+    <nav>
+        <div class="nav-content">
+            <a href="#" class="logo">Flexbox CSS</a>
+            <ul class="nav-links">
+                <li><a href="#introduccion">Introducción</a></li>
+                <li><a href="#conceptos-basicos">Conceptos Básicos</a></li>
+                <li><a href="#propiedades-contenedor">Propiedades del Contenedor</a></li>
+                <li><a href="#propiedades-items">Propiedades de los Items</a></li>
+                <li><a href="#ejemplos-practicos">Ejemplos Prácticos</a></li>
+                <li><a href="#conclusiones">Conclusiones</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section id="introduccion">
+            <h2>Introducción a Flexbox</h2>
+            <p>Flexbox (Flexible Box Module) es un modelo de diseño unidimensional en CSS que ofrece una forma más eficiente de disponer, alinear y distribuir el espacio entre los elementos de un contenedor, incluso cuando su tamaño es desconocido o dinámico.</p>
+            <p>Introducido como parte de CSS3, Flexbox resuelve muchos de los problemas de diseño que eran difíciles o imposibles de resolver con métodos tradicionales como floats o posicionamiento.</p>
+
+            <h3>¿Por qué usar Flexbox?</h3>
+            <ul>
+                <li>Simplifica la creación de diseños flexibles y responsivos</li>
+                <li>Permite alinear elementos tanto horizontal como verticalmente</li>
+                <li>Facilita la distribución de espacio y la gestión del tamaño de los elementos</li>
+                <li>Otorga control sobre el orden de aparición de los elementos sin modificar el HTML</li>
+                <li>Soluciona muchos problemas comunes de diseño web</li>
+            </ul>
+
+            <div class="note">
+                <p><strong>Nota:</strong> Flexbox está diseñado para layouts unidimensionales (en una fila o columna), mientras que CSS Grid (que veremos en otra guía) está diseñado para layouts bidimensionales (filas y columnas simultáneamente).</p>
+            </div>
+        </section>
+
+        <section id="conceptos-basicos">
+            <h2>Conceptos Básicos de Flexbox</h2>
+            <p>Para trabajar con Flexbox, es importante entender sus conceptos fundamentales y la terminología asociada.</p>
+
+            <h3>Terminología clave</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Crear un contenedor flexible */
+.contenedor {
+    display: flex;
+}
+
+/* Los elementos hijos se convierten 
+   automáticamente en flex items */
+</code></pre>
+                </div>
+                <div class="visual-example">
+                    <ul>
+                        <li><strong>Flex Container (Contenedor Flex):</strong> El elemento padre al que se le aplica <code>display: flex</code>.</li>
+                        <li><strong>Flex Items (Elementos Flex):</strong> Los hijos directos del contenedor flex.</li>
+                        <li><strong>Main Axis (Eje Principal):</strong> El eje principal del contenedor flex, que va desde el inicio (main-start) hasta el final (main-end).</li>
+                        <li><strong>Cross Axis (Eje Transversal):</strong> El eje perpendicular al eje principal.</li>
+                        <li><strong>Main Size (Tamaño Principal):</strong> El ancho o alto del elemento flex en la dirección del eje principal.</li>
+                        <li><strong>Cross Size (Tamaño Transversal):</strong> El ancho o alto del elemento flex en la dirección del eje transversal.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Ejes y direcciones</h3>
+            <p>La dirección de los ejes en Flexbox depende de la propiedad <code>flex-direction</code>:</p>
+
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Eje principal horizontal (predeterminado) */
+.contenedor-row {
+    display: flex;
+    flex-direction: row;
+}
+
+/* Eje principal vertical */
+.contenedor-column {
+    display: flex;
+    flex-direction: column;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>Con flex-direction: row:</strong></p>
+                    <ul>
+                        <li>Eje principal: horizontal (izquierda a derecha)</li>
+                        <li>Eje transversal: vertical (arriba a abajo)</li>
+                    </ul>
+                    <div class="flex-container-demo flex-row">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+
+                    <p><strong>Con flex-direction: column:</strong></p>
+                    <ul>
+                        <li>Eje principal: vertical (arriba a abajo)</li>
+                        <li>Eje transversal: horizontal (izquierda a derecha)</li>
+                    </ul>
+                    <div class="flex-container-demo flex-column">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="propiedades-contenedor">
+            <h2>Propiedades del Contenedor Flex</h2>
+            <p>Estas propiedades se aplican al contenedor flex (elemento padre) y afectan a la disposición de todos los elementos flex dentro de él.</p>
+
+            <h3>display: flex</h3>
+            <p>Define un contenedor flex en bloque.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.contenedor {
+    display: flex;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div class="flex-container-demo">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>display: inline-flex</h3>
+            <p>Define un contenedor flex en línea (el contenedor en sí se comporta como un elemento inline).</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.contenedor {
+    display: inline-flex;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <span style="display: inline-flex; background-color: #e0e7ff; padding: 10px; border-radius: 5px;">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                    </span>
+                    <span style="display: inline-flex; background-color: #e0e7ff; padding: 10px; border-radius: 5px; margin-left: 10px;">
+                        <div class="flex-item">3</div>
+                        <div class="flex-item">4</div>
+                    </span>
+                </div>
+            </div>
+
+            <h3>flex-direction</h3>
+            <p>Establece la dirección del eje principal, determinando cómo se colocan los flex items en el contenedor.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* De izquierda a derecha (predeterminado) */
+.row {
+    flex-direction: row;
+}
+
+/* De derecha a izquierda */
+.row-reverse {
+    flex-direction: row-reverse;
+}
+
+/* De arriba a abajo */
+.column {
+    flex-direction: column;
+}
+
+/* De abajo a arriba */
+.column-reverse {
+    flex-direction: column-reverse;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>row:</strong></p>
+                    <div class="flex-container-demo">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+
+                    <p><strong>row-reverse:</strong></p>
+                    <div class="flex-container-demo" style="flex-direction: row-reverse;">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+
+                    <p><strong>column:</strong></p>
+                    <div class="flex-container-demo" style="flex-direction: column;">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+
+                    <p><strong>column-reverse:</strong></p>
+                    <div class="flex-container-demo" style="flex-direction: column-reverse;">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>flex-wrap</h3>
+            <p>Controla si los flex items deben ajustarse en una sola línea o pueden fluir en múltiples líneas.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Una sola línea (predeterminado) */
+.nowrap {
+    flex-wrap: nowrap;
+}
+
+/* Múltiples líneas, de arriba a abajo */
+.wrap {
+    flex-wrap: wrap;
+}
+
+/* Múltiples líneas, de abajo a arriba */
+.wrap-reverse {
+    flex-wrap: wrap-reverse;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>nowrap:</strong></p>
+                    <div class="flex-container-demo flex-nowrap" style="width: 100%;">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                        <div class="flex-item">4</div>
+                        <div class="flex-item">5</div>
+                        <div class="flex-item">6</div>
+                    </div>
+
+                    <p><strong>wrap:</strong></p>
+                    <div class="flex-container-demo flex-wrap" style="width: 100%;">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                        <div class="flex-item">4</div>
+                        <div class="flex-item">5</div>
+                        <div class="flex-item">6</div>
+                    </div>
+
+                    <p><strong>wrap-reverse:</strong></p>
+                    <div class="flex-container-demo" style="flex-wrap: wrap-reverse; width: 100%;">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                        <div class="flex-item">4</div>
+                        <div class="flex-item">5</div>
+                        <div class="flex-item">6</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>flex-flow</h3>
+            <p>Propiedad abreviada para flex-direction y flex-wrap.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* flex-direction flex-wrap */
+.contenedor {
+    flex-flow: row wrap;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div class="flex-container-demo" style="flex-flow: row wrap; width: 100%;">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                        <div class="flex-item">4</div>
+                        <div class="flex-item">5</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>justify-content</h3>
+            <p>Define cómo se distribuyen los flex items a lo largo del eje principal.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Alinear al inicio (predeterminado) */
+.start {
+    justify-content: flex-start;
+}
+
+/* Alinear al centro */
+.center {
+    justify-content: center;
+}
+
+/* Alinear al final */
+.end {
+    justify-content: flex-end;
+}
+
+/* Distribuir con espacios iguales entre elementos */
+.between {
+    justify-content: space-between;
+}
+
+/* Distribuir con espacios iguales alrededor de elementos */
+.around {
+    justify-content: space-around;
+}
+
+/* Distribuir con espacios exactamente iguales */
+.evenly {
+    justify-content: space-evenly;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>flex-start:</strong></p>
+                    <div class="flex-container-demo justify-start">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+
+                    <p><strong>center:</strong></p>
+                    <div class="flex-container-demo justify-center">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+
+                    <p><strong>flex-end:</strong></p>
+                    <div class="flex-container-demo justify-end">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+
+                    <p><strong>space-between:</strong></p>
+                    <div class="flex-container-demo justify-between">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+
+                    <p><strong>space-around:</strong></p>
+                    <div class="flex-container-demo justify-around">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+
+                    <p><strong>space-evenly:</strong></p>
+                    <div class="flex-container-demo justify-evenly">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>align-items</h3>
+            <p>Define cómo se alinean los flex items a lo largo del eje transversal.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Alinear al inicio del eje transversal */
+.start {
+    align-items: flex-start;
+}
+
+/* Alinear al centro del eje transversal */
+.center {
+    align-items: center;
+}
+
+/* Alinear al final del eje transversal */
+.end {
+    align-items: flex-end;
+}
+
+/* Estirar para llenar el contenedor (predeterminado) */
+.stretch {
+    align-items: stretch;
+}
+
+/* Alinear las líneas de base de los elementos */
+.baseline {
+    align-items: baseline;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p><strong>flex-start:</strong></p>
+                    <div class="flex-container-demo align-start different-heights">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+
+                    <p><strong>center:</strong></p>
+                    <div class="flex-container-demo align-center different-heights">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+
+                    <p><strong>flex-end:</strong></p>
+                    <div class="flex-container-demo align-end different-heights">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+
+                    <p><strong>stretch:</strong></p>
+                    <div class="flex-container-demo align-stretch" style="height: 100px;">
+                        <div class="flex-item" style="height: auto;">1</div>
+                        <div class="flex-item" style="height: auto;">2</div>
+                        <div class="flex-item" style="height: auto;">3</div>
+                    </div>
+
+                    <p><strong>baseline:</strong></p>
+                    <div class="flex-container-demo align-baseline different-baselines">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>align-content</h3>
+            <p>Define cómo se distribuyen las líneas a lo largo del eje transversal cuando hay espacio extra. Solo tiene efecto cuando hay múltiples líneas (flex-wrap: wrap).</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Valores disponibles */
+.contenedor {
+    align-content: flex-start | flex-end | center |
+    space-between | space-around | space-evenly |
+    stretch; /* (valor predeterminado) */
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>Ejemplos con múltiples líneas (contenedor alto con flex-wrap: wrap):</p>
+                    
+                    <p><strong>flex-start:</strong></p>
+                    <div class="flex-container-demo flex-wrap" style="height: 200px; align-content: flex-start;">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                        <div class="flex-item">4</div>
+                        <div class="flex-item">5</div>
+                        <div class="flex-item">6</div>
+                    </div>
+
+                    <p><strong>center:</strong></p>
+                    <div class="flex-container-demo flex-wrap" style="height: 200px; align-content: center;">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                        <div class="flex-item">4</div>
+                        <div class="flex-item">5</div>
+                        <div class="flex-item">6</div>
+                    </div>
+
+                    <p><strong>space-between:</strong></p>
+                    <div class="flex-container-demo flex-wrap" style="height: 200px; align-content: space-between;">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                        <div class="flex-item">4</div>
+                        <div class="flex-item">5</div>
+                        <div class="flex-item">6</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note">
+                <p><strong>Importante:</strong> No confundir <code>align-items</code> con <code>align-content</code>. <code>align-items</code> controla la alineación de los elementos individuales, mientras que <code>align-content</code> controla la alineación de las líneas cuando hay varias.</p>
+            </div>
+        </section>
+
+        <section id="propiedades-items">
+            <h2>Propiedades de los Flex Items</h2>
+            <p>Estas propiedades se aplican a los elementos hijos del contenedor flex (los flex items) y afectan únicamente al elemento al que se aplican.</p>
+
+            <h3>order</h3>
+            <p>Controla el orden en que aparecen los flex items. Por defecto, todos los elementos tienen order: 0.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* El valor predeterminado es 0 */
+.primero {
+    order: 1; /* Aparecerá después */
+}
+
+.segundo {
+    order: 2; /* Aparecerá al final */
+}
+
+.tercero {
+    order: -1; /* Aparecerá primero */
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>Orden visual ≠ Orden en el HTML:</p>
+                    <div class="flex-container-demo">
+                        <div class="flex-item order-1">1 (order: 1)</div>
+                        <div class="flex-item order-2">2 (order: 2)</div>
+                        <div class="flex-item" style="order: -1;">3 (order: -1)</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>flex-grow</h3>
+            <p>Define la capacidad de un flex item para crecer si hay espacio disponible. Acepta un valor numérico sin unidades que sirve como proporción.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* El valor predeterminado es 0 (no crece) */
+.no-grow {
+    flex-grow: 0;
+}
+
+.grow-1 {
+    flex-grow: 1; /* Crece en proporción 1 */
+}
+
+.grow-2 {
+    flex-grow: 2; /* Crece el doble que grow-1 */
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div class="flex-container-demo">
+                        <div class="flex-item" style="flex-grow: 0;">flex-grow: 0</div>
+                        <div class="flex-item flex-grow-1">flex-grow: 1</div>
+                        <div class="flex-item flex-grow-2">flex-grow: 2</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>flex-shrink</h3>
+            <p>Define la capacidad de un flex item para encogerse si es necesario. Funciona como un factor de contracción.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* El valor predeterminado es 1 (se encoge) */
+.shrink-default {
+    flex-shrink: 1;
+}
+
+.no-shrink {
+    flex-shrink: 0; /* No se encoge */
+}
+
+.shrink-more {
+    flex-shrink: 2; /* Se encoge el doble */
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>Cuando el contenedor es demasiado pequeño:</p>
+                    <div class="flex-container-demo" style="width: 100%;">
+                        <div class="flex-item" style="flex-basis: 200px; flex-shrink: 1;">shrink: 1</div>
+                        <div class="flex-item" style="flex-basis: 200px; flex-shrink: 0;">shrink: 0</div>
+                        <div class="flex-item" style="flex-basis: 200px; flex-shrink: 2;">shrink: 2</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>flex-basis</h3>
+            <p>Define el tamaño inicial de un flex item antes de que el espacio restante se distribuya según flex-grow y flex-shrink.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Puede ser un valor en px, %, em, etc. */
+.basis-100 {
+    flex-basis: 100px;
+}
+
+.basis-50-percent {
+    flex-basis: 50%;
+}
+
+/* Valor predeterminado */
+.basis-auto {
+    flex-basis: auto; /* Tamaño basado en el contenido */
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div class="flex-container-demo flex-basis-demo">
+                        <div class="flex-item">flex-basis: 100px</div>
+                        <div class="flex-item">flex-basis: 200px</div>
+                        <div class="flex-item">flex-basis: auto</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>flex</h3>
+            <p>Propiedad abreviada para flex-grow, flex-shrink y flex-basis. Es recomendable usar esta propiedad en lugar de las propiedades individuales.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* flex: flex-grow flex-shrink flex-basis */
+
+/* Predeterminado */
+.flex-default {
+    flex: 0 1 auto;
+}
+
+/* Igual crecimiento */
+.flex-equal {
+    flex: 1;  /* Equivale a flex: 1 1 0% */
+}
+
+/* Crecimiento proporcional */
+.flex-double {
+    flex: 2;  /* Equivale a flex: 2 1 0% */
+}
+
+/* No crece, no se encoge, tamaño fijo */
+.flex-fixed {
+    flex: 0 0 200px;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div class="flex-container-demo flex-shorthand-demo">
+                        <div class="flex-item">flex: 1</div>
+                        <div class="flex-item">flex: 2</div>
+                        <div class="flex-item">flex: 0 0 200px</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>align-self</h3>
+            <p>Permite sobrescribir la alineación especificada por align-items para flex items individuales.</p>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Valores idénticos a align-items */
+.align-self-start {
+    align-self: flex-start;
+}
+
+.align-self-center {
+    align-self: center;
+}
+
+.align-self-end {
+    align-self: flex-end;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div class="flex-container-demo" style="height: 150px; align-items: stretch;">
+                        <div class="flex-item align-self-start">flex-start</div>
+                        <div class="flex-item align-self-center">center</div>
+                        <div class="flex-item align-self-end">flex-end</div>
+                        <div class="flex-item">stretch (default)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ejemplos-practicos">
+            <h2>Ejemplos Prácticos de Flexbox</h2>
+            <p>A continuación, veremos algunos patrones de diseño comunes que se pueden implementar fácilmente con Flexbox.</p>
+
+            <h3>Centrado perfecto (vertical y horizontal)</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.centrado-perfecto {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    background-color: #e0e7ff;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div style="display: flex; justify-content: center; align-items: center; height: 200px; background-color: #e0e7ff; border-radius: 5px;">
+                        <div class="flex-item">Elemento perfectamente centrado</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Barra de navegación</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #4f46e5;
+    color: white;
+}
+
+.logo {
+    font-weight: bold;
+}
+
+.nav-items {
+    display: flex;
+    gap: 1rem;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background-color: #4f46e5; color: white; border-radius: 5px;">
+                        <div style="font-weight: bold;">Logo</div>
+                        <div style="display: flex; gap: 1rem;">
+                            <div>Inicio</div>
+                            <div>Acerca</div>
+                            <div>Servicios</div>
+                            <div>Contacto</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Tarjetas con altura igual</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.cards-container {
+    display: flex;
+    gap: 1rem;
+}
+
+.card {
+    flex: 1;
+    padding: 1rem;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 5px;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div style="display: flex; gap: 1rem;">
+                        <div style="flex: 1; padding: 1rem; background-color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 5px;">
+                            <h4>Tarjeta 1</h4>
+                            <p>Contenido breve.</p>
+                        </div>
+                        <div style="flex: 1; padding: 1rem; background-color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 5px;">
+                            <h4>Tarjeta 2</h4>
+                            <p>Contenido más largo que se extiende a varias líneas para demostrar cómo todas las tarjetas mantienen la misma altura independientemente del contenido.</p>
+                        </div>
+                        <div style="flex: 1; padding: 1rem; background-color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 5px;">
+                            <h4>Tarjeta 3</h4>
+                            <p>Contenido de longitud media.</p>
+                            <p>Con algo más de texto.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Layout Holy Grail (Santo Grial)</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.holy-grail {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.holy-grail-header,
+.holy-grail-footer {
+    background-color: #4f46e5;
+    color: white;
+    padding: 1rem;
+}
+
+.holy-grail-body {
+    display: flex;
+    flex: 1;
+}
+
+.holy-grail-content {
+    flex: 1;
+    padding: 1rem;
+}
+
+.holy-grail-nav,
+.holy-grail-ads {
+    flex: 0 0 200px;
+    padding: 1rem;
+    background-color: #e0e7ff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .holy-grail-body {
+        flex-direction: column;
+    }
+    
+    .holy-grail-nav,
+    .holy-grail-ads {
+        flex: 0;
+    }
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div style="display: flex; flex-direction: column; height: 400px; border: 1px solid #e5e7eb; border-radius: 5px; overflow: hidden;">
+                        <div style="background-color: #4f46e5; color: white; padding: 1rem;">Header</div>
+                        <div style="display: flex; flex: 1;">
+                            <div style="flex: 0 0 100px; padding: 1rem; background-color: #e0e7ff;">Nav</div>
+                            <div style="flex: 1; padding: 1rem;">Contenido principal</div>
+                            <div style="flex: 0 0 100px; padding: 1rem; background-color: #e0e7ff;">Lateral</div>
+                        </div>
+                        <div style="background-color: #4f46e5; color: white; padding: 1rem;">Footer</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Playground Interactivo</h3>
+            <div class="interactive-demo">
+                <h4>Experimenta con las propiedades de Flexbox</h4>
+                <div class="control-panel">
+                    <button class="control-btn" onclick="setFlexDirection('row')">Row</button>
+                    <button class="control-btn" onclick="setFlexDirection('column')">Column</button>
+                    <button class="control-btn" onclick="setJustifyContent('flex-start')">Justify: Start</button>
+                    <button class="control-btn" onclick="setJustifyContent('center')">Justify: Center</button>
+                    <button class="control-btn" onclick="setJustifyContent('flex-end')">Justify: End</button>
+                    <button class="control-btn" onclick="setJustifyContent('space-between')">Justify: Between</button>
+                    <button class="control-btn" onclick="setAlignItems('flex-start')">Align: Start</button>
+                    <button class="control-btn" onclick="setAlignItems('center')">Align: Center</button>
+                    <button class="control-btn" onclick="setAlignItems('flex-end')">Align: End</button>
+                    <button class="control-btn" onclick="setAlignItems('stretch')">Align: Stretch</button>
+                    <button class="control-btn" onclick="setFlexWrap('nowrap')">No Wrap</button>
+                    <button class="control-btn" onclick="setFlexWrap('wrap')">Wrap</button>
+                </div>
+
+                <div class="flex-playground" id="flex-playground">
+                    <div class="playground-item">1</div>
+                    <div class="playground-item">2</div>
+                    <div class="playground-item">3</div>
+                    <div class="playground-item">4</div>
+                </div>
+
+                <div class="code-display" id="code-display">
+                    .contenedor {
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-start;
+                        align-items: stretch;
+                        flex-wrap: nowrap;
+                    }
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusiones">
+            <h2>Conclusiones y Buenas Prácticas</h2>
+            <p>Flexbox ha revolucionado la forma en que creamos diseños en CSS, facilitando soluciones a problemas que antes eran complejos de resolver.</p>
+
+            <h3>Ventajas de Flexbox</h3>
+            <ul>
+                <li>Simplifica enormemente el centrado vertical, que solía ser muy complicado</li>
+                <li>Facilita la creación de diseños responsivos sin necesidad de media queries complejas</li>
+                <li>Permite distribuir el espacio de forma proporcional o equitativa</li>
+                <li>Ofrece control sobre el orden visual de los elementos sin modificar el HTML</li>
+                <li>Es compatible con todos los navegadores modernos</li>
+            </ul>
+
+            <h3>Buenas prácticas al usar Flexbox</h3>
+            <ol>
+                <li><strong>No anides contenedores flex innecesariamente.</strong> La simplicidad es clave.</li>
+                <li><strong>Utiliza la propiedad abreviada flex</strong> en lugar de las propiedades individuales cuando sea posible.</li>
+                <li><strong>Considera la accesibilidad</strong> al cambiar el orden visual. El orden del DOM sigue siendo importante para lectores de pantalla.</li>
+                <li><strong>Usa flex-basis en lugar de width/height</strong> para dimensionar flex items.</li>
+                <li><strong>Combina Flexbox con Grid</strong> para diseños más complejos. Flexbox para filas/columnas, Grid para layouts bidimensionales.</li>
+                <li><strong>Prueba diferentes navegadores</strong> y dispositivos para asegurarte de que tu diseño funciona correctamente.</li>
+            </ol>
+
+            <h3>Cuándo usar Flexbox vs. Grid</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <h4>Usa Flexbox cuando:</h4>
+                    <ul>
+                        <li>Necesites alinear elementos en una sola dimensión (fila o columna)</li>
+                        <li>El diseño deba adaptarse al contenido</li>
+                        <li>Necesites control sobre la alineación</li>
+                        <li>Quieras distribuir espacio entre elementos</li>
+                    </ul>
+                </div>
+                <div class="visual-example">
+                    <h4>Usa Grid cuando:</h4>
+                    <ul>
+                        <li>Necesites un layout bidimensional (filas y columnas)</li>
+                        <li>El diseño deba ser explícitamente definido</li>
+                        <li>Tengas un diseño complejo que se beneficie de áreas con nombre</li>
+                        <li>Necesites control preciso sobre la posición de elementos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="note">
+                <p><strong>Nota final:</strong> Flexbox es una herramienta poderosa que se complementa perfectamente con otras técnicas de CSS como Grid. La combinación de ambas permite crear prácticamente cualquier diseño imaginable de forma eficiente y mantenible.</p>
+            </div>
+        </section>
+    </main>
+
+    <a href="#" class="back-to-top">↑</a>
+
+    <script>
+        // Script para manejar el scroll suave al hacer clic en los enlaces de navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Funciones para el playground interactivo
+        function setFlexDirection(direction) {
+            document.getElementById('flex-playground').style.flexDirection = direction;
+            updateCodeDisplay();
+        }
+
+        function setJustifyContent(value) {
+            document.getElementById('flex-playground').style.justifyContent = value;
+            updateCodeDisplay();
+        }
+
+        function setAlignItems(value) {
+            document.getElementById('flex-playground').style.alignItems = value;
+            updateCodeDisplay();
+        }
+
+        function setFlexWrap(value) {
+            document.getElementById('flex-playground').style.flexWrap = value;
+            updateCodeDisplay();
+        }
+
+        function updateCodeDisplay() {
+            const playground = document.getElementById('flex-playground');
+            const styles = window.getComputedStyle(playground);
+            
+            document.getElementById('code-display').textContent = `.contenedor {
+    display: flex;
+    flex-direction: ${styles.flexDirection};
+    justify-content: ${styles.justifyContent};
+    align-items: ${styles.alignItems};
+    flex-wrap: ${styles.flexWrap};
+}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamentos Básicos de CSS</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary-color: #e11d48;
+            --text-color: #1f2937;
+            --light-bg: #f3f4f6;
+            --code-bg: #f1f5f9;
+            --border-color: #e5e7eb;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #fff;
+            padding-bottom: 40px;
+        }
+
+        header {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        nav {
+            background-color: white;
+            position: sticky;
+            top: 0;
+            padding: 0.5rem;
+            box-shadow: var(--box-shadow);
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background-color: var(--light-bg);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--box-shadow);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h3 {
+            color: var(--text-color);
+            margin: 1.5rem 0 1rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background-color: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #334155;
+        }
+
+        .example-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .code-example {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .visual-example {
+            flex: 1;
+            min-width: 300px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--light-bg);
+        }
+
+        .box-model-demo {
+            width: 300px;
+            margin: 2rem auto;
+            position: relative;
+        }
+
+        .box-model-content {
+            width: 100px;
+            height: 100px;
+            background-color: #93c5fd;
+            padding: 20px;
+            border: 10px solid #3b82f6;
+            margin: 20px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .box-model-margin {
+            width: 200px;
+            height: 200px;
+            background-color: #fee2e2;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -3;
+        }
+
+        .box-model-border {
+            width: 140px;
+            height: 140px;
+            background-color: #3b82f6;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -2;
+        }
+
+        .box-model-padding {
+            width: 120px;
+            height: 120px;
+            background-color: #bfdbfe;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .demo-element {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+        }
+
+        .display-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .grid-item {
+            background-color: #bfdbfe;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .display-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .flex-item {
+            background-color: #c7d2fe;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .selector-example {
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--light-bg);
+        }
+
+        .selector-example p {
+            margin: 5px 0;
+        }
+
+        .primary-btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+
+        .primary-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .note {
+            background-color: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .warning {
+            background-color: #fff7ed;
+            border-left: 4px solid #f97316;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .specificity-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .specificity-table th,
+        .specificity-table td {
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        .specificity-table th {
+            background-color: var(--light-bg);
+        }
+
+        .specificity-table tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .back-to-top:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            section {
+                padding: 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+        }
+
+        #clase-ejemplo {
+            color: purple;
+            font-weight: bold;
+        }
+
+        .ejemplo-id {
+            color: blue;
+            text-decoration: underline;
+        }
+
+        #ejemplo-especificidad p {
+            color: black;
+        }
+
+        #ejemplo-especificidad .clase-media {
+            color: blue;
+        }
+
+        #ejemplo-especificidad #id-alta {
+            color: red;
+        }
+
+        /* Para la sección de Display */
+        .display-block {
+            display: block;
+            background-color: #dbeafe;
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .display-inline {
+            display: inline;
+            background-color: #e0e7ff;
+            padding: 10px;
+            margin: 0 5px;
+        }
+
+        .display-none {
+            display: none;
+        }
+
+        .display-inline-block {
+            display: inline-block;
+            background-color: #fae8ff;
+            padding: 10px;
+            margin: 0 5px;
+            width: 150px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Fundamentos Básicos de CSS</h1>
+        <p class="subtitle">Guía interactiva para aprender CSS desde cero</p>
+    </header>
+
+    <nav>
+        <div class="nav-content">
+            <a href="#" class="logo">CSS Básico</a>
+            <ul class="nav-links">
+                <li><a href="#selectores">Selectores</a></li>
+                <li><a href="#especificidad">Especificidad</a></li>
+                <li><a href="#box-model">Box Model</a></li>
+                <li><a href="#clases-ids">Clases e IDs</a></li>
+                <li><a href="#display">Display</a></li>
+                <li><a href="#conclusiones">Conclusiones</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section id="introduccion">
+            <h2>Introducción a CSS</h2>
+            <p>CSS (Cascading Style Sheets) es un lenguaje de estilo que define la presentación de documentos HTML. Permite separar el contenido de la presentación, lo que facilita el mantenimiento y la coherencia visual de un sitio web.</p>
+            <p>En esta guía, exploraremos los conceptos fundamentales de CSS que todo desarrollador web debe conocer para crear interfaces atractivas y funcionales.</p>
+            <div class="note">
+                <p><strong>Nota:</strong> Para utilizar CSS, puedes incluirlo en tu HTML de tres formas: en línea con el atributo <code>style</code>, en la sección <code>&lt;head&gt;</code> utilizando la etiqueta <code>&lt;style&gt;</code>, o en un archivo externo vinculado con <code>&lt;link&gt;</code>.</p>
+            </div>
+        </section>
+
+        <section id="selectores">
+            <h2>Selectores CSS</h2>
+            <p>Los selectores son patrones que se utilizan para seleccionar los elementos HTML que deseas estilizar. Hay varios tipos de selectores que permiten apuntar a elementos específicos dentro de tu documento.</p>
+
+            <h3>Tipos principales de selectores</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Selector de elemento */
+p {
+    color: blue;
+}
+
+/* Selector de clase */
+.destacado {
+    font-weight: bold;
+}
+
+/* Selector de ID */
+#cabecera {
+    background-color: gray;
+}
+
+/* Selector de atributo */
+input[type="text"] {
+    border: 1px solid #ccc;
+}
+
+/* Selector descendiente */
+article p {
+    font-size: 16px;
+}
+
+/* Selector hijo directo */
+ul > li {
+    list-style: square;
+}
+
+/* Selector de hermano adyacente */
+h2 + p {
+    font-style: italic;
+}
+
+/* Selector universal */
+* {
+    box-sizing: border-box;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <div class="selector-example">
+                        <p>Este es un párrafo normal.</p>
+                        <p class="destacado">Este es un párrafo con clase "destacado".</p>
+                        <p id="cabecera">Este es un párrafo con ID "cabecera".</p>
+                        <input type="text" placeholder="Entrada de texto">
+                        <article>
+                            <p>Este es un párrafo dentro de un artículo.</p>
+                        </article>
+                        <ul>
+                            <li>Elemento de lista (hijo directo)</li>
+                            <ul>
+                                <li>Elemento de lista anidado</li>
+                            </ul>
+                        </ul>
+                        <h2>Encabezado h2</h2>
+                        <p>Este párrafo es adyacente al h2.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Combinando selectores</h3>
+            <p>Los selectores se pueden combinar para crear reglas más específicas y potentes:</p>
+            <pre><code>/* Elementos que tienen ambas clases */
+.clase1.clase2 {
+    color: purple;
+}
+
+/* Elementos con una clase específica dentro de un ID */
+#contenedor .item {
+    margin: 10px;
+}
+
+/* Elemento específico con una clase */
+p.nota {
+    font-style: italic;
+}</code></pre>
+
+            <div class="note">
+                <p><strong>Consejo:</strong> Utiliza selectores específicos cuando necesites dirigirte a elementos concretos, pero evita ser demasiado específico innecesariamente, ya que dificultará la sobreescritura de estilos.</p>
+            </div>
+        </section>
+
+        <section id="especificidad">
+            <h2>Especificidad en CSS</h2>
+            <p>La especificidad es un conjunto de reglas que determina qué estilos se aplican a un elemento cuando hay múltiples reglas que apuntan al mismo elemento. Es crucial entender la especificidad para evitar confusiones cuando los estilos no se aplican como esperamos.</p>
+
+            <h3>Orden de especificidad (de menor a mayor)</h3>
+            <table class="specificity-table">
+                <thead>
+                    <tr>
+                        <th>Nivel</th>
+                        <th>Tipo de selector</th>
+                        <th>Valor</th>
+                        <th>Ejemplo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Selectores de elemento y pseudo-elementos</td>
+                        <td>0,0,0,1</td>
+                        <td><code>p</code>, <code>h1</code>, <code>::before</code></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Selectores de clase, atributos y pseudo-clases</td>
+                        <td>0,0,1,0</td>
+                        <td><code>.clase</code>, <code>[type="text"]</code>, <code>:hover</code></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Selectores de ID</td>
+                        <td>0,1,0,0</td>
+                        <td><code>#id</code></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Estilos en línea</td>
+                        <td>1,0,0,0</td>
+                        <td><code>style="color: red;"</code></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>!important</td>
+                        <td>∞</td>
+                        <td><code>color: red !important;</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Ejemplo de especificidad</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* Especificidad: 0,0,0,1 */
+p {
+    color: black;
+}
+
+/* Especificidad: 0,0,1,0 */
+.clase-media {
+    color: blue;
+}
+
+/* Especificidad: 0,1,0,0 */
+#id-alta {
+    color: red;
+}</code></pre>
+                </div>
+                <div class="visual-example" id="ejemplo-especificidad">
+                    <p>Este párrafo tiene la especificidad más baja (selector de elemento).</p>
+                    <p class="clase-media">Este párrafo tiene especificidad media (selector de clase).</p>
+                    <p id="id-alta" class="clase-media">Este párrafo tiene la especificidad más alta (selector de ID), por lo que su color rojo prevalece sobre la clase.</p>
+                </div>
+            </div>
+
+            <div class="warning">
+                <p><strong>Advertencia:</strong> El uso de <code>!important</code> rompe el flujo natural de especificidad y puede conducir a código CSS difícil de mantener. Úsalo con moderación y sólo cuando sea absolutamente necesario.</p>
+            </div>
+        </section>
+
+        <section id="box-model">
+            <h2>Box Model (Modelo de Caja)</h2>
+            <p>El modelo de caja es un concepto fundamental en CSS que describe cómo se representan visualmente todos los elementos HTML. Cada elemento se considera como una caja rectangular compuesta por cuatro áreas principales:</p>
+
+            <div class="box-model-demo">
+                <div class="box-model-margin"></div>
+                <div class="box-model-border"></div>
+                <div class="box-model-padding"></div>
+                <div class="box-model-content">Contenido</div>
+            </div>
+
+            <h3>Componentes del Box Model</h3>
+            <ol>
+                <li><strong>Content (Contenido):</strong> El área donde se muestra el texto, imágenes u otros contenidos.</li>
+                <li><strong>Padding (Relleno):</strong> El espacio transparente entre el contenido y el borde.</li>
+                <li><strong>Border (Borde):</strong> Una línea que rodea el padding y el contenido.</li>
+                <li><strong>Margin (Margen):</strong> El espacio transparente que separa un elemento de otros elementos.</li>
+            </ol>
+
+            <h3>Propiedades del Box Model</h3>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.elemento {
+    /* Dimensiones de contenido */
+    width: 300px;
+    height: 200px;
+    
+    /* Padding (arriba, derecha, abajo, izquierda) */
+    padding: 20px;
+    /* O individualmente */
+    padding-top: 10px;
+    padding-right: 15px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    
+    /* Border */
+    border: 2px solid black;
+    /* O individualmente */
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+    
+    /* Margin */
+    margin: 15px;
+    /* O individualmente */
+    margin-top: 10px;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>La fórmula para calcular el ancho total de un elemento es:</p>
+                    <pre><code>ancho total = width + padding-left + padding-right + border-left + border-right + margin-left + margin-right</code></pre>
+                    <p>La fórmula para calcular el alto total de un elemento es:</p>
+                    <pre><code>alto total = height + padding-top + padding-bottom + border-top + border-bottom + margin-top + margin-bottom</code></pre>
+                </div>
+            </div>
+
+            <h3>Box-sizing</h3>
+            <p>La propiedad <code>box-sizing</code> cambia cómo se calcula el ancho y alto de un elemento:</p>
+
+            <pre><code>/* El valor predeterminado */
+.content-box {
+    box-sizing: content-box;
+    /* width y height solo incluyen el contenido */
+}
+
+/* Incluye padding y border en width y height */
+.border-box {
+    box-sizing: border-box;
+    /* width y height incluyen contenido, padding y border */
+}</code></pre>
+
+            <div class="note">
+                <p><strong>Consejo:</strong> Muchos desarrolladores aplican <code>box-sizing: border-box;</code> a todos los elementos para un cálculo de dimensiones más intuitivo:</p>
+                <pre><code>* {
+    box-sizing: border-box;
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="clases-ids">
+            <h2>Clases e IDs</h2>
+            <p>Las clases y los IDs son atributos HTML que permiten identificar y estilizar elementos específicos. Son fundamentales para aplicar estilos de manera selectiva en tu página web.</p>
+
+            <h3>Clases</h3>
+            <p>Las clases son atributos que pueden aplicarse a múltiples elementos. Se definen con un punto <code>.</code> en CSS.</p>
+
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* En tu CSS */
+.boton {
+    padding: 10px 15px;
+    background-color: #3b82f6;
+    color: white;
+    border-radius: 4px;
+}
+
+.boton-grande {
+    font-size: 18px;
+    padding: 15px 20px;
+}
+
+/* Puedes aplicar múltiples clases a un elemento */</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>En tu HTML:</p>
+                    <pre><code>&lt;button class="boton"&gt;Botón Normal&lt;/button&gt;
+&lt;button class="boton boton-grande"&gt;Botón Grande&lt;/button&gt;</code></pre>
+                    <p>Resultado:</p>
+                    <button class="primary-btn">Botón Normal</button>
+                    <button class="primary-btn" style="font-size: 18px; padding: 15px 20px;">Botón Grande</button>
+                </div>
+            </div>
+
+            <div class="note">
+                <p><strong>Ventajas de las clases:</strong></p>
+                <ul>
+                    <li>Pueden reutilizarse en múltiples elementos</li>
+                    <li>Un elemento puede tener múltiples clases</li>
+                    <li>Son ideales para estilos que se comparten entre varios elementos</li>
+                </ul>
+            </div>
+
+            <h3>IDs</h3>
+            <p>Los IDs son identificadores únicos que solo deben aplicarse a un elemento por página. Se definen con un hash <code>#</code> en CSS.</p>
+
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>/* En tu CSS */
+#encabezado-principal {
+    font-size: 32px;
+    color: #1e40af;
+    text-align: center;
+}
+
+#formulario-contacto {
+    background-color: #f3f4f6;
+    padding: 20px;
+    border-radius: 8px;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>En tu HTML:</p>
+                    <pre><code>&lt;h1 id="encabezado-principal"&gt;Título Principal&lt;/h1&gt;
+&lt;form id="formulario-contacto"&gt;...&lt;/form&gt;</code></pre>
+                    <p>Los IDs tienen mayor especificidad que las clases, por lo que sus estilos prevalecerán sobre los estilos de clases que se apliquen al mismo elemento.</p>
+                </div>
+            </div>
+
+            <div class="warning">
+                <p><strong>Importante:</strong> Aunque técnicamente un navegador mostrará una página con IDs duplicados, esto es incorrecto según los estándares HTML. Cada ID debe ser único en la página, especialmente si utilizas JavaScript para manipular elementos por ID.</p>
+            </div>
+
+            <h3>¿Cuándo usar clases vs IDs?</h3>
+            <ul>
+                <li><strong>Usa clases</strong> para estilos que se repiten o que pueden aplicarse a múltiples elementos.</li>
+                <li><strong>Usa IDs</strong> para elementos únicos en la página (como el encabezado principal) o elementos que necesitas manipular individualmente con JavaScript.</li>
+            </ul>
+        </section>
+
+        <section id="display">
+            <h2>Propiedad Display</h2>
+            <p>La propiedad <code>display</code> es una de las más importantes en CSS, ya que determina cómo se muestra un elemento en el flujo del documento. Controla el comportamiento de renderizado del elemento y cómo interactúa con otros elementos.</p>
+
+            <h3>Valores comunes de Display</h3>
+
+            <h4>display: block</h4>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.display-block {
+    display: block;
+    background-color: #dbeafe;
+    padding: 10px;
+    width: 100%;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>Características:</p>
+                    <ul>
+                        <li>Ocupa todo el ancho disponible de su contenedor</li>
+                        <li>Comienza en una nueva línea</li>
+                        <li>Respeta propiedades de ancho y alto</li>
+                    </ul>
+                    <p>Ejemplo:</p>
+                    <div class="display-block">Elemento block</div>
+                    <div class="display-block">Otro elemento block</div>
+                </div>
+            </div>
+
+            <h4>display: inline</h4>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.display-inline {
+    display: inline;
+    background-color: #e0e7ff;
+    padding: 10px;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>Características:</p>
+                    <ul>
+                        <li>Ocupa solo el espacio necesario para su contenido</li>
+                        <li>No comienza en una nueva línea</li>
+                        <li>No respeta propiedades de ancho y alto</li>
+                        <li>El padding horizontal funciona, pero el vertical puede superponerse</li>
+                    </ul>
+                    <p>Ejemplo:</p>
+                    <span class="display-inline">Elemento inline</span>
+                    <span class="display-inline">Otro elemento inline</span>
+                </div>
+            </div>
+
+            <h4>display: inline-block</h4>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.display-inline-block {
+    display: inline-block;
+    background-color: #fae8ff;
+    padding: 10px;
+    width: 150px;
+    height: 50px;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>Características:</p>
+                    <ul>
+                        <li>Combinación de block e inline</li>
+                        <li>No comienza en una nueva línea</li>
+                        <li>Respeta propiedades de ancho y alto</li>
+                        <li>Respeta padding, margin y border completamente</li>
+                    </ul>
+                    <p>Ejemplo:</p>
+                    <div class="display-inline-block">Inline-block</div>
+                    <div class="display-inline-block">Otro inline-block</div>
+                </div>
+            </div>
+
+            <h4>display: none</h4>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.display-none {
+    display: none;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>Características:</p>
+                    <ul>
+                        <li>El elemento no se muestra en absoluto</li>
+                        <li>No ocupa espacio en el diseño</li>
+                        <li>Útil para elementos que quieres ocultar completamente</li>
+                    </ul>
+                    <p>Ejemplo: Hay un elemento con <code>display: none</code> aquí, pero no puedes verlo porque está oculto.</p>
+                    <div class="display-none">Este elemento no es visible</div>
+                </div>
+            </div>
+
+            <h4>display: flex</h4>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.display-flex {
+    display: flex;
+    gap: 10px;
+}
+
+.flex-item {
+    background-color: #c7d2fe;
+    padding: 20px;
+    border-radius: 5px;
+    flex: 1;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>Características:</p>
+                    <ul>
+                        <li>Crea un contenedor flexible</li>
+                        <li>Los elementos hijos se comportan como flex-items</li>
+                        <li>Permite alineación horizontal y vertical</li>
+                    </ul>
+                    <p>Ejemplo:</p>
+                    <div class="display-flex">
+                        <div class="flex-item">Flex 1</div>
+                        <div class="flex-item">Flex 2</div>
+                        <div class="flex-item">Flex 3</div>
+                    </div>
+                </div>
+            </div>
+
+            <h4>display: grid</h4>
+            <div class="example-container">
+                <div class="code-example">
+                    <pre><code>.display-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.grid-item {
+    background-color: #bfdbfe;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+}</code></pre>
+                </div>
+                <div class="visual-example">
+                    <p>Características:</p>
+                    <ul>
+                        <li>Crea un contenedor de cuadrícula</li>
+                        <li>Los elementos hijos se posicionan en celdas</li>
+                        <li>Permite diseños bidimensionales (filas y columnas)</li>
+                    </ul>
+                    <p>Ejemplo:</p>
+                    <div class="display-grid">
+                        <div class="grid-item">Grid 1</div>
+                        <div class="grid-item">Grid 2</div>
+                        <div class="grid-item">Grid 3</div>
+                        <div class="grid-item">Grid 4</div>
+                        <div class="grid-item">Grid 5</div>
+                        <div class="grid-item">Grid 6</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note">
+                <p><strong>Consejo:</strong> Las propiedades <code>display: flex</code> y <code>display: grid</code> son muy potentes y merecen su propio estudio detallado, ya que tienen numerosas propiedades asociadas para controlar el posicionamiento y la alineación de los elementos.</p>
+            </div>
+        </section>
+
+        <section id="conclusiones">
+            <h2>Conclusiones y Recursos Adicionales</h2>
+            <p>Esta guía introduce los conceptos fundamentales de CSS que forman la base para crear diseños web atractivos y funcionales. Dominar estos conceptos te permitirá construir interfaces más complejas y responsivas.</p>
+
+            <h3>Conceptos clave a recordar</h3>
+            <ul>
+                <li>Los <strong>selectores</strong> te permiten apuntar a elementos específicos</li>
+                <li>La <strong>especificidad</strong> determina qué reglas CSS prevalecen cuando hay conflictos</li>
+                <li>El <strong>Box Model</strong> describe la composición de cada elemento HTML</li>
+                <li>Las <strong>clases e IDs</strong> te permiten aplicar estilos de manera selectiva</li>
+                <li>La propiedad <strong>display</strong> controla cómo se comportan los elementos en el flujo del documento</li>
+            </ul>
+
+            <h3>Pasos siguientes</h3>
+            <p>Para profundizar tus conocimientos de CSS, considera aprender:</p>
+            <ul>
+                <li>Flexbox y Grid en profundidad</li>
+                <li>Posicionamiento CSS</li>
+                <li>Transiciones y animaciones</li>
+                <li>Media queries y diseño responsivo</li>
+                <li>Variables CSS (Custom Properties)</li>
+                <li>Preprocesadores como Sass o Less</li>
+            </ul>
+
+            <div class="note">
+                <p><strong>Recuerda:</strong> La práctica constante es la clave para dominar CSS. Intenta recrear diseños que encuentres interesantes y experimenta con las propiedades que has aprendido.</p>
+            </div>
+        </section>
+    </main>
+
+    <a href="#" class="back-to-top">↑</a>
+
+    <script>
+        // Script para manejar el scroll suave al hacer clic en los enlaces de navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
