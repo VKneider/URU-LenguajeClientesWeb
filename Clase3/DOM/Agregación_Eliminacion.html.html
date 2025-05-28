@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear y Eliminar Elementos con JavaScript</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Crear y Eliminar Elementos con JavaScript</h1>
+
+        <!-- Botones para crear y eliminar elementos -->
+        <button id="createElement">Crear Elemento</button>
+        <button id="removeElement">Eliminar Elemento</button>
+
+        <!-- Contenedor donde se agregarán los elementos creados -->
+        <div id="elementContainer"></div>
+    </div>
+
+    <script>
+        // Obtener referencia a los botones y al contenedor
+        const createElementButton = document.getElementById('createElement');
+        const removeElementButton = document.getElementById('removeElement');
+        const elementContainer = document.getElementById('elementContainer');
+
+        // Variable para llevar un control de los elementos creados
+        let elementCount = 0;
+
+        // Crear un nuevo elemento
+        createElementButton.addEventListener('click', () => {
+            elementCount++; // Incrementar el contador de elementos
+            const newElement = document.createElement('div');
+            newElement.classList.add('new-element');
+            newElement.id = `element-${elementCount}`;
+
+            // Crear el contenido dentro del nuevo elemento
+            const text = document.createElement('p');
+            text.textContent = `Este es el elemento número ${elementCount}`;
+            newElement.appendChild(text);
+
+            // Añadir el nuevo elemento al contenedor
+            elementContainer.appendChild(newElement);
+        });
+
+        // Eliminar el último elemento creado
+        removeElementButton.addEventListener('click', () => {
+            const lastElement = elementContainer.lastElementChild;
+            if (lastElement) {
+                elementContainer.removeChild(lastElement); // Eliminar el último hijo
+                elementCount--; // Decrementar el contador de elementos
+            } else {
+                alert('No hay elementos para eliminar.');
+            }
+        });
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #2ecc71;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        #elementContainer {
+            margin-top: 20px;
+        }
+
+        .new-element {
+            margin: 10px;
+            padding: 20px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .new-element p {
+            margin: 0;
+            font-size: 18px;
+        }
+    </style>
+</body>
+
+</html>

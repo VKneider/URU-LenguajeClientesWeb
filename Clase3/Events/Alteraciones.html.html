@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo de Eventos en JavaScript</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            border: 2px solid #333;
+            padding: 20px;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .box {
+            background-color: lightblue;
+            padding: 20px;
+            margin: 10px;
+            border: 1px solid blue;
+        }
+        button {
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Ejemplo de Eventos en JavaScript</h2>
+
+    <!-- Evento preventDefault en enlaces -->
+    <p>
+        <a href="https://www.google.com" id="enlace">Este enlace no te llevará a Google</a>
+    </p>
+
+    <!-- Evento en formulario -->
+    <form id="miFormulario">
+        <label for="nombre">Nombre: </label>
+        <input type="text" id="nombre" name="nombre" required>
+        <button type="submit">Enviar</button>
+    </form>
+
+    <!-- Evento de propagación -->
+    <div class="container" id="contenedor">
+        <p>Haz clic aquí (bubbling y stopPropagation)</p>
+        <div class="box" id="caja">
+            Haz clic en la caja
+        </div>
+    </div>
+
+    <!-- Evento de mouse -->
+    <button id="boton">Haz clic aquí</button>
+
+    <script>
+        // 1. PREVENIR LA ACCIÓN POR DEFECTO DE UN ENLACE
+        document.getElementById("enlace").addEventListener("click", function(event) {
+            event.preventDefault(); // Evita que el enlace navegue a otra página
+            alert("Este enlace está bloqueado con preventDefault()");
+        });
+
+        // 2. VALIDACIÓN DE FORMULARIO Y PREVENCIÓN DE ENVÍO
+        document.getElementById("miFormulario").addEventListener("submit", function(event) {
+            const nombre = document.getElementById("nombre").value;
+            if (nombre.trim() === "") {
+                alert("Por favor, ingresa un nombre antes de enviar.");
+                event.preventDefault(); // Evita el envío si el campo está vacío
+            } else {
+                alert("Formulario enviado con éxito.");
+            }
+        });
+
+        // 3. EVENTO DE PROPAGACIÓN (bubbling y stopPropagation)
+        document.getElementById("contenedor").addEventListener("click", function() {
+            alert("Hiciste clic en el CONTENEDOR.");
+        });
+
+        document.getElementById("caja").addEventListener("click", function(event) {
+            alert("Hiciste clic en la CAJA.");
+            event.stopPropagation(); // Detiene la propagación del evento al contenedor
+        });
+
+        // 4. EVENTO DEL MOUSE
+        document.getElementById("boton").addEventListener("click", function(event) {
+            alert(`Hiciste clic en el botón. Tipo de evento: ${event.type}`);
+        });
+
+    </script>
+
+</body>
+</html>

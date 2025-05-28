@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos en JavaScript</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .output {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Eventos en JavaScript</h1>
+    <div class="container">
+        <h2>1. Métodos modernos y antiguos</h2>
+        <button id="modernEventBtn">Evento con addEventListener</button>
+        <button onclick="oldEventHandler()">Evento Antiguo (onclick)</button>
+
+        <h2>2. Tipos de Eventos Comunes</h2>
+        <div>
+            <h3>Eventos de ratón:</h3>
+            <button id="clickBtn">Clic (click)</button>
+            <button id="dblClickBtn">Doble Clic (dblclick)</button>
+            <div id="hoverBox">Pasa el ratón aquí</div>
+        </div>
+
+        <div>
+            <h3>Eventos de teclado:</h3>
+            <input type="text" id="keyInput" placeholder="Escribe algo...">
+        </div>
+
+        <div>
+            <h3>Eventos de formulario:</h3>
+            <input type="text" id="inputChange" placeholder="Cambia el texto">
+            <form id="formExample">
+                <input type="text" id="focusInput" placeholder="Enfoca aquí" required>
+                <button type="submit">Enviar Formulario</button>
+            </form>
+        </div>
+
+        <h2>3. Eventos de carga y recursos</h2>
+        <button id="loadBtn">Cargar Evento (DOMContentLoaded)</button>
+        <button id="errorBtn">Causar Error (error)</button>
+
+        <h2>4. Crear y disparar un Evento Personalizado</h2>
+        <button id="createCustomEventBtn">Crear y Disparar Evento Personalizado</button>
+
+        <div class="output" id="output"></div>
+
+        <p>
+            <strong>Explicación:</strong><br>
+            Los <code>CustomEvent</code> en JavaScript permiten crear eventos personalizados con cualquier nombre que elijas y agregarles datos adicionales. Estos eventos pueden ser disparados manualmente con el método <code>dispatchEvent</code> y luego escuchados usando <code>addEventListener</code>.
+        </p>
+        <h3>Cómo funciona:</h3>
+        <ul>
+            <li><strong>Creación del evento personalizado:</strong> Usamos el constructor <code>CustomEvent</code> para crear un evento que puede incluir información adicional, como un objeto que contenga detalles.</li>
+            <li><strong>Disparo del evento:</strong> Usamos <code>dispatchEvent</code> para enviar el evento a un elemento, que luego puede ser escuchado.</li>
+            <li><strong>Escucha del evento:</strong> Usamos <code>addEventListener</code> para escuchar y manejar el evento cuando se dispara.</li>
+        </ul>
+    </div>
+
+    <script>
+        // Métodos modernos
+        const modernEventBtn = document.getElementById('modernEventBtn');
+        modernEventBtn.addEventListener('click', () => {
+            alert("Evento manejado con addEventListener");
+        });
+
+        // Métodos antiguos
+        function oldEventHandler() {
+            alert("Evento manejado con onclick (antiguo método)");
+        }
+
+        // Eventos de ratón
+        const clickBtn = document.getElementById('clickBtn');
+        clickBtn.addEventListener('click', () => {
+            document.getElementById('output').textContent = "¡Hiciste clic en el botón!";
+        });
+
+        const dblClickBtn = document.getElementById('dblClickBtn');
+        dblClickBtn.addEventListener('dblclick', () => {
+            document.getElementById('output').textContent = "¡Hiciste doble clic!";
+        });
+
+        const hoverBox = document.getElementById('hoverBox');
+        hoverBox.addEventListener('mouseover', () => {
+            hoverBox.style.backgroundColor = '#8e44ad';
+            hoverBox.textContent = "¡Te acercaste!";
+        });
+        hoverBox.addEventListener('mouseout', () => {
+            hoverBox.style.backgroundColor = '#9b59b6';
+            hoverBox.textContent = "Pasa el ratón aquí";
+        });
+
+        // Eventos de teclado
+        const keyInput = document.getElementById('keyInput');
+        keyInput.addEventListener('keydown', (event) => {
+            document.getElementById('output').textContent = `Tecla presionada: ${event.key}`;
+        });
+        keyInput.addEventListener('keyup', (event) => {
+            document.getElementById('output').textContent = `Tecla soltada: ${event.key}`;
+        });
+
+        // Eventos de formulario
+        const inputChange = document.getElementById('inputChange');
+        inputChange.addEventListener('input', () => {
+            document.getElementById('output').textContent = `Valor del input: ${inputChange.value}`;
+        });
+
+        const formExample = document.getElementById('formExample');
+        formExample.addEventListener('submit', (event) => {
+            event.preventDefault();
+            document.getElementById('output').textContent = "Formulario enviado (prevenido por JavaScript).";
+        });
+
+        const focusInput = document.getElementById('focusInput');
+        focusInput.addEventListener('focus', () => {
+            document.getElementById('output').textContent = "¡Input en foco!";
+        });
+        focusInput.addEventListener('blur', () => {
+            document.getElementById('output').textContent = "¡Input fuera de foco!";
+        });
+
+        // Eventos de carga y recursos
+        const loadBtn = document.getElementById('loadBtn');
+        loadBtn.addEventListener('click', () => {
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('output').textContent = "DOM completamente cargado";
+            });
+        });
+
+        const errorBtn = document.getElementById('errorBtn');
+        errorBtn.addEventListener('click', () => {
+            try {
+                throw new Error("Error provocado");
+            } catch (error) {
+                document.getElementById('output').textContent = `Error capturado: ${error.message}`;
+            }
+        });
+
+        // Crear y disparar un Evento Personalizado
+        const createCustomEventBtn = document.getElementById('createCustomEventBtn');
+        createCustomEventBtn.addEventListener('click', () => {
+            // 1. Crear el evento personalizado
+            const customEvent = new CustomEvent('miEventoPersonalizado', {
+                detail: { mensaje: "Este es un evento personalizado que contiene información adicional." }
+            });
+
+            // 2. Disparar el evento
+            // En este caso, estamos disparando el evento en el 'document', por lo que cualquier escucha en el documento lo recibirá.
+            document.dispatchEvent(customEvent);
+
+            // 3. Escuchar el evento personalizado
+            document.addEventListener('miEventoPersonalizado', (event) => {
+                // Cuando el evento es recibido, mostramos el mensaje que fue enviado con el evento
+                document.getElementById('output').textContent = event.detail.mensaje;
+            });
+        });
+    </script>
+
+</body>
+
+</html>

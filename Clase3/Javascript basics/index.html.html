@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamentos de JavaScript</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #005f99;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 4px;
+            color: #c7254e;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fundamentos de JavaScript</h1>
+
+    <h2>1. Tipos de variables en JavaScript</h2>
+    <p>JavaScript tiene tres formas principales de declarar variables:</p>
+    <ul>
+        <li><code>var</code>: Forma antigua, tiene ámbito de función y puede causar problemas de <strong>hoisting</strong>.</li>
+        <li><code>let</code>: Permite declarar variables con ámbito de bloque. Es la forma recomendada para variables que cambian.</li>
+        <li><code>const</code>: Declara constantes (valores que no cambian).</li>
+    </ul>
+    <p><strong>Ejemplo:</strong></p>
+    <pre><code>
+    var nombre = "Juan"; // Variable global o de función
+    let edad = 25;       // Variable con ámbito de bloque
+    const pais = "México"; // Constante, no puede ser reasignada
+    console.log(nombre, edad, pais);
+    </code></pre>
+
+    <h2>2. Hoisting</h2>
+    <p>El <strong>hoisting</strong> es el comportamiento de JavaScript en el que las declaraciones de variables y funciones son "movidas" al inicio del código.</p>
+    <p><strong>Ejemplo:</strong></p>
+    <pre><code>
+    console.log(x); // undefined (por hoisting, la declaración se mueve arriba, pero no su asignación)
+    var x = 10;
+    console.log(x); // 10
+    </code></pre>
+    <p>Con <code>let</code> y <code>const</code>, el hoisting ocurre, pero no se pueden usar antes de declararlas:</p>
+    <pre><code>
+    console.log(y); // Error: Cannot access 'y' before initialization
+    let y = 20;
+    </code></pre>
+
+    <h2>3. Tipos de datos en JavaScript</h2>
+    <p>JavaScript tiene varios tipos de datos primitivos:</p>
+    <ul>
+        <li><code>string</code>: Cadena de texto. Ejemplo: <code>"Hola"</code></li>
+        <li><code>number</code>: Número. Ejemplo: <code>42</code></li>
+        <li><code>boolean</code>: Verdadero o falso. Ejemplo: <code>true</code>, <code>false</code></li>
+        <li><code>undefined</code>: Variable declarada pero sin valor.</li>
+        <li><code>null</code>: Valor nulo intencional.</li>
+        <li><code>symbol</code>: Tipo único introducido en ES6.</li>
+        <li><code>object</code>: Colección de pares clave-valor (ver siguiente sección).</li>
+    </ul>
+    <p><strong>Ejemplo:</strong></p>
+    <pre><code>
+    let texto = "Hola, mundo"; // string
+    let numero = 42;           // number
+    let verdadero = true;      // boolean
+    let sinValor;              // undefined
+    let nulo = null;           // null
+    console.log(typeof texto, typeof numero, typeof verdadero, typeof sinValor, typeof nulo);
+    </code></pre>
+
+    <h2>4. Objetos en JavaScript</h2>
+    <p>Un objeto es una estructura que permite almacenar datos en pares clave-valor. Puede contener propiedades (datos) y métodos (funciones).</p>
+    <p><strong>Ejemplo:</strong></p>
+    <pre><code>
+    const persona = {
+        nombre: "Ana",
+        edad: 30,
+        saludar: function() {
+            console.log("Hola, soy " + this.nombre);
+        }
+    };
+
+    console.log(persona.nombre); // "Ana"
+    persona.saludar();           // "Hola, soy Ana"
+    persona.apellido = "Pérez";  // Agregar propiedad
+    delete persona.edad;         // Eliminar propiedad
+    console.log(persona);
+    </code></pre>
+
+    <h2>5. JSON (JavaScript Object Notation)</h2>
+    <p>JSON es un formato ligero basado en texto para intercambiar datos. Es muy utilizado para transferir información entre cliente y servidor.</p>
+    <p><strong>Ejemplo:</strong></p>
+    <pre><code>
+    // Objeto en JavaScript
+    const objeto = { nombre: "Luis", edad: 28 };
+
+    // Convertir un objeto a JSON
+    const jsonString = JSON.stringify(objeto);
+    console.log(jsonString); // '{"nombre":"Luis","edad":28}'
+
+    // Convertir JSON a un objeto
+    const nuevoObjeto = JSON.parse(jsonString);
+    console.log(nuevoObjeto.nombre); // "Luis"
+    </code></pre>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipulación del DOM</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Manipulación del DOM con JavaScript</h1>
+
+        <div class="box" id="box">
+            <p>Este es un cuadro de texto.</p>
+        </div>
+
+        <!-- Entradas para elegir texto, color y tamaño -->
+        <div>
+            <label for="textInput">Texto a mostrar: </label>
+            <input type="text" id="textInput" placeholder="Escribe tu texto aquí">
+        </div>
+
+        <div>
+            <label for="colorInput">Color de fondo: </label>
+            <input type="color" id="colorInput" value="#3498db">
+        </div>
+
+        <div>
+            <label for="widthInput">Ancho: </label>
+            <input type="number" id="widthInput" value="200" min="100">
+        </div>
+
+        <div>
+            <label for="heightInput">Alto: </label>
+            <input type="number" id="heightInput" value="150" min="100">
+        </div>
+
+        <button id="changeText">Cambiar Texto</button>
+        <button id="changeStyle">Cambiar Estilo</button>
+        <button id="toggleVisibility">Alternar Visibilidad</button>
+        <button id="logProperties">Ver Propiedades</button>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        // Obtener referencias a los elementos del DOM
+        const box = document.getElementById('box');
+        const changeTextButton = document.getElementById('changeText');
+        const changeStyleButton = document.getElementById('changeStyle');
+        const toggleVisibilityButton = document.getElementById('toggleVisibility');
+        const logPropertiesButton = document.getElementById('logProperties');
+        const output = document.getElementById('output');
+        const textInput = document.getElementById('textInput');
+        const colorInput = document.getElementById('colorInput');
+        const widthInput = document.getElementById('widthInput');
+        const heightInput = document.getElementById('heightInput');
+
+        // Cambiar el texto dentro del cuadro
+        changeTextButton.addEventListener('click', () => {
+            const newText = textInput.value || 'Texto predeterminado';
+            box.innerHTML = `<p>${newText}</p>`;
+        });
+
+        // Cambiar el estilo del cuadro
+        changeStyleButton.addEventListener('click', () => {
+            const newColor = colorInput.value;
+            const newWidth = widthInput.value;
+            const newHeight = heightInput.value;
+            box.style.backgroundColor = newColor;
+            box.style.width = `${newWidth}px`;
+            box.style.height = `${newHeight}px`;
+            box.style.borderRadius = '20px';
+            box.style.boxShadow = '0 8px 12px rgba(0, 0, 0, 0.2)';
+        });
+
+        // Alternar la visibilidad del cuadro
+        toggleVisibilityButton.addEventListener('click', () => {
+            if (box.style.display === 'none') {
+                box.style.display = 'flex';  // Aseguramos que el contenido se mantenga centrado al mostrarse
+            } else {
+                box.style.display = 'none';
+            }
+        });
+
+        // Mostrar propiedades del cuadro
+        logPropertiesButton.addEventListener('click', () => {
+            const properties = `
+        Ancho: ${box.offsetWidth}px
+        Alto: ${box.offsetHeight}px
+        Color de fondo: ${box.style.backgroundColor}
+        Visibilidad: ${box.style.display === 'none' ? 'Oculto' : 'Visible'}
+    `;
+            output.textContent = properties;
+        });
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .box {
+            width: 200px;
+            height: 150px;
+            margin: 20px auto;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #2ecc71;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        #output {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        input[type="text"], input[type="color"], input[type="number"] {
+            margin: 10px;
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</body>
+
+</html>
