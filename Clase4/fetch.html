@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch API en JavaScript - Tutorial Interactivo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .section h2 {
+            color: #4a5568;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .section h3 {
+            color: #2d3748;
+            margin: 20px 0 15px 0;
+            font-size: 1.4em;
+        }
+
+        .demo-area {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button.get { background: linear-gradient(45deg, #48bb78, #38a169); }
+        .button.post { background: linear-gradient(45deg, #4299e1, #3182ce); }
+        .button.put { background: linear-gradient(45deg, #ed8936, #dd6b20); }
+        .button.delete { background: linear-gradient(45deg, #f56565, #e53e3e); }
+
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            position: relative;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background: #3182ce;
+        }
+
+        .output {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            min-height: 50px;
+            border-left: 4px solid #68d391;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .method-card {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .method-card.get { background: linear-gradient(45deg, #48bb78, #38a169); }
+        .method-card.post { background: linear-gradient(45deg, #4299e1, #3182ce); }
+        .method-card.put { background: linear-gradient(45deg, #ed8936, #dd6b20); }
+        .method-card.delete { background: linear-gradient(45deg, #f56565, #e53e3e); }
+
+        .response-viewer {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .response-headers {
+            background: #edf2f7;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .status-200 { background: #c6f6d5; color: #22543d; }
+        .status-400 { background: #fed7d7; color: #742a2a; }
+        .status-500 { background: #feb2b2; color: #742a2a; }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            color: #4a5568;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: #f7fafc;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .error-display {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #f56565;
+            margin: 10px 0;
+        }
+
+        .success-display {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #48bb78;
+            margin: 10px 0;
+        }
+
+        .api-playground {
+            background: #f7fafc;
+            border: 2px solid #4299e1;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .url-builder {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .url-builder select, .url-builder input {
+            flex: 1;
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Fetch API en JavaScript</h1>
+            <p>Tu guía completa para hacer peticiones HTTP modernas</p>
+        </div>
+
+        <!-- Introducción -->
+        <div class="section">
+            <h2>🎯 ¿Qué es Fetch API?</h2>
+            <p><strong>Fetch API</strong> es la forma moderna de realizar peticiones HTTP en JavaScript. Reemplaza a XMLHttpRequest con una interfaz más simple, potente y basada en Promesas.</p>
+            
+            <h3>¿Por qué usar Fetch?</h3>
+            <ul style="margin: 15px 0; padding-left: 30px;">
+                <li>✅ <strong>Sintaxis más limpia</strong> y fácil de entender</li>
+                <li>✅ <strong>Basado en Promesas</strong> - Compatible con async/await</li>
+                <li>✅ <strong>Mejor manejo de errores</strong> y respuestas</li>
+                <li>✅ <strong>Soporte nativo</strong> en navegadores modernos</li>
+                <li>✅ <strong>Más flexible</strong> para configurar peticiones</li>
+            </ul>
+
+            <div class="demo-area">
+                <h4>Demo: Tu primera petición con Fetch</h4>
+                <button class="button" onclick="demoFirstFetch()">🚀 Mi Primera Petición</button>
+                <div id="firstFetchOutput" class="output">Haz clic para realizar tu primera petición con fetch...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// Sintaxis básica de fetch
+fetch('https://jsonplaceholder.typicode.com/posts/1')
+    .then(response => response.json())
+    .then(data => {
+        console.log('Datos recibidos:', data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
+// Con async/await (más moderno y limpio)
+async function obtenerDatos() {
+    try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+        const data = await response.json();
+        console.log('Datos:', data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Diferencia con XMLHttpRequest (método antiguo)
+// XMLHttpRequest - Verboso y complicado
+const xhr = new XMLHttpRequest();
+xhr.open('GET', 'https://api.ejemplo.com/datos');
+xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText);
+        console.log(data);
+    }
+};
+xhr.send();
+
+// Fetch - Limpio y moderno
+fetch('https://api.ejemplo.com/datos')
+    .then(response => response.json())
+    .then(data => console.log(data));
+                </pre>
+            </div>
+        </div>
+
+        <!-- Métodos HTTP -->
+        <div class="section">
+            <h2>🔄 Métodos HTTP con Fetch</h2>
+            <p>Fetch soporta todos los métodos HTTP principales. Cada uno tiene un propósito específico:</p>
+
+            <div class="method-grid">
+                <div class="method-card get">
+                    <h4>GET</h4>
+                    <p>Obtener datos</p>
+                </div>
+                <div class="method-card post">
+                    <h4>POST</h4>
+                    <p>Crear datos</p>
+                </div>
+                <div class="method-card put">
+                    <h4>PUT</h4>
+                    <p>Actualizar datos</p>
+                </div>
+                <div class="method-card delete">
+                    <h4>DELETE</h4>
+                    <p>Eliminar datos</p>
+                </div>
+            </div>
+
+            <div class="demo-area">
+                <h4>Demo: Métodos HTTP en Acción</h4>
+                <button class="button get" onclick="demoGet()">GET - Obtener</button>
+                <button class="button post" onclick="demoPost()">POST - Crear</button>
+                <button class="button put" onclick="demoPut()">PUT - Actualizar</button>
+                <button class="button delete" onclick="demoDelete()">DELETE - Eliminar</button>
+                <div id="methodOutput" class="output">Selecciona un método HTTP para ver la demostración...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// GET - Obtener datos (por defecto)
+async function obtenerPost(id) {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+    const data = await response.json();
+    return data;
+}
+
+// POST - Crear nuevos datos
+async function crearPost(postData) {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData)
+    });
+    const data = await response.json();
+    return data;
+}
+
+// PUT - Actualizar datos existentes
+async function actualizarPost(id, postData) {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData)
+    });
+    const data = await response.json();
+    return data;
+}
+
+// DELETE - Eliminar datos
+async function eliminarPost(id) {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+        method: 'DELETE'
+    });
+    
+    if (response.ok) {
+        console.log(`Post ${id} eliminado exitosamente`);
+    }
+    
+    return response.ok;
+}
+
+// PATCH - Actualizar parcialmente
+async function actualizarParcial(id, cambios) {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cambios)
+    });
+    return await response.json();
+}
+                </pre>
+            </div>
+        </div>
+
+        <!-- Configuración de Fetch -->
+        <div class="section">
+            <h2>⚙️ Configuración Avanzada de Fetch</h2>
+            <p>Fetch acepta un segundo parámetro con opciones para personalizar completamente la petición:</p>
+
+            <div class="demo-area">
+                <h4>Demo: Configuración de Headers</h4>
+                <button class="button" onclick="demoHeaders()">Petición con Headers</button>
+                <button class="button" onclick="demoAuth()">Autenticación</button>
+                <button class="button" onclick="demoTimeout()">Con Timeout</button>
+                <div id="configOutput" class="output">Prueba diferentes configuraciones...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// Configuración completa de fetch
+const opciones = {
+    method: 'POST',                    // Método HTTP
+    headers: {                         // Headers de la petición
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer token123',
+        'Accept': 'application/json',
+        'User-Agent': 'MiApp/1.0'
+    },
+    body: JSON.stringify({            // Cuerpo de la petición
+        nombre: 'Juan',
+        email: 'juan@email.com'
+    }),
+    mode: 'cors',                     // cors, no-cors, same-origin
+    credentials: 'include',           // include, same-origin, omit
+    cache: 'no-cache',               // default, no-cache, reload, force-cache
+    redirect: 'follow',              // manual, follow, error
+    referrerPolicy: 'no-referrer'    // Política de referrer
+};
+
+fetch('https://api.ejemplo.com/usuarios', opciones)
+    .then(response => response.json())
+    .then(data => console.log(data));
+
+// Headers dinámicos
+function crearHeaders(token = null) {
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+    
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    return headers;
+}
+
+// Uso con headers dinámicos
+async function peticionConAuth(datos, token) {
+    const response = await fetch('/api/data', {
+        method: 'POST',
+        headers: crearHeaders(token),
+        body: JSON.stringify(datos)
+    });
+    
+    return await response.json();
+}
+
+// Timeout personalizado (fetch no tiene timeout nativo)
+function fetchConTimeout(url, opciones = {}, timeout = 5000) {
+    return Promise.race([
+        fetch(url, opciones),
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Timeout')), timeout)
+        )
+    ]);
+}
+
+// Uso del timeout
+try {
+    const response = await fetchConTimeout('/api/datos', {}, 3000);
+    const data = await response.json();
+    console.log(data);
+} catch (error) {
+    if (error.message === 'Timeout') {
+        console.log('La petición tardó demasiado');
+    }
+}
+                </pre>
+            </div>
+        </div>
+
+        <!-- Manejo de Respuestas -->
+        <div class="section">
+            <h2>📨 Manejo de Respuestas</h2>
+            <p>El objeto Response de fetch contiene información valiosa sobre la respuesta del servidor:</p>
+
+            <div class="demo-area">
+                <h4>Demo: Explorando Respuestas</h4>
+                <button class="button" onclick="demoResponseInfo()">Info de Respuesta</button>
+                <button class="button" onclick="demoResponseTypes()">Tipos de Respuesta</button>
+                <div id="responseOutput" class="output">Explora diferentes aspectos de las respuestas...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// Propiedades del objeto Response
+async function analizarRespuesta(url) {
+    const response = await fetch(url);
+    
+    console.log('=== INFORMACIÓN DE LA RESPUESTA ===');
+    console.log('URL:', response.url);
+    console.log('Status:', response.status);
+    console.log('Status Text:', response.statusText);
+    console.log('OK:', response.ok);              // true si status 200-299
+    console.log('Headers:', response.headers);
+    console.log('Type:', response.type);         // basic, cors, opaque
+    console.log('Redirected:', response.redirected);
+    
+    // Verificar tipo de contenido
+    const contentType = response.headers.get('content-type');
+    console.log('Content-Type:', contentType);
+    
+    return response;
+}
+
+// Diferentes formas de leer el cuerpo de la respuesta
+async function leerRespuesta(url) {
+    const response = await fetch(url);
+    
+    // ⚠️ IMPORTANTE: Solo puedes leer el cuerpo UNA VEZ
+    
+    // Para JSON
+    if (response.headers.get('content-type')?.includes('application/json')) {
+        const data = await response.json();
+        return data;
+    }
+    
+    // Para texto plano
+    if (response.headers.get('content-type')?.includes('text/')) {
+        const text = await response.text();
+        return text;
+    }
+    
+    // Para archivos binarios (imágenes, PDFs, etc.)
+    if (response.headers.get('content-type')?.includes('image/')) {
+        const blob = await response.blob();
+        return blob;
+    }
+    
+    // Para streams de datos
+    const reader = response.body.getReader();
+    // ... procesamiento de stream
+}
+
+// Clonando respuestas para leer múltiples veces
+async function leerMultiplesVeces(url) {
+    const response = await fetch(url);
+    
+    // Clonar antes de leer
+    const respuesta1 = response.clone();
+    const respuesta2 = response.clone();
+    
+    // Ahora puedes leer de cada clon
+    const json = await respuesta1.json();
+    const text = await respuesta2.text();
+    
+    return { json, text };
+}
+
+// Headers específicos
+async function leerHeaders(url) {
+    const response = await fetch(url);
+    
+    // Leer header específico
+    const contentLength = response.headers.get('content-length');
+    const lastModified = response.headers.get('last-modified');
+    
+    // Iterar todos los headers
+    for (const [nombre, valor] of response.headers) {
+        console.log(`${nombre}: ${valor}`);
+    }
+    
+    // Verificar si existe un header
+    if (response.headers.has('authorization')) {
+        console.log('Respuesta incluye autorización');
+    }
+}
+                </pre>
+            </div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Método</th>
+                        <th>Descripción</th>
+                        <th>Tipo de Retorno</th>
+                        <th>Uso Común</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.json()</code></td>
+                        <td>Parsea respuesta como JSON</td>
+                        <td>Promise&lt;Object&gt;</td>
+                        <td>APIs REST</td>
+                    </tr>
+                    <tr>
+                        <td><code>.text()</code></td>
+                        <td>Respuesta como texto plano</td>
+                        <td>Promise&lt;String&gt;</td>
+                        <td>HTML, XML, texto</td>
+                    </tr>
+                    <tr>
+                        <td><code>.blob()</code></td>
+                        <td>Respuesta como blob binario</td>
+                        <td>Promise&lt;Blob&gt;</td>
+                        <td>Imágenes, archivos</td>
+                    </tr>
+                    <tr>
+                        <td><code>.arrayBuffer()</code></td>
+                        <td>Respuesta como buffer</td>
+                        <td>Promise&lt;ArrayBuffer&gt;</td>
+                        <td>Datos binarios</td>
+                    </tr>
+                    <tr>
+                        <td><code>.formData()</code></td>
+                        <td>Respuesta como FormData</td>
+                        <td>Promise&lt;FormData&gt;</td>
+                        <td>Formularios multipart</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Manejo de Errores -->
+        <div class="section">
+            <h2>🚨 Manejo de Errores</h2>
+            <p><strong>¡Importante!</strong> Fetch solo rechaza la promesa en casos de error de red. Los códigos de estado HTTP como 404 o 500 NO son considerados errores.</p>
+
+            <div class="demo-area">
+                <h4>Demo: Diferentes Tipos de Errores</h4>
+                <button class="button" onclick="demoNetworkError()">Error de Red</button>
+                <button class="button" onclick="demo404Error()">Error 404</button>
+                <button class="button" onclick="demo500Error()">Error 500</button>
+                <button class="button" onclick="demoProperErrorHandling()">Manejo Correcto</button>
+                <div id="errorOutput" class="output">Prueba diferentes tipos de errores...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// ❌ MANEJO INCORRECTO - No detecta errores HTTP
+async function manejoIncorrecto() {
+    try {
+        const response = await fetch('/api/datos-inexistentes'); // 404
+        const data = await response.json(); // ¡Esto puede fallar!
+        console.log(data);
+    } catch (error) {
+        // Este catch solo se ejecuta para errores de RED
+        console.error('Error:', error);
+    }
+}
+
+// ✅ MANEJO CORRECTO - Verifica response.ok
+async function manejoCorrectoBásico(url) {
+    try {
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error.message);
+        throw error; // Re-lanzar si es necesario
+    }
+}
+
+// ✅ MANEJO AVANZADO - Diferentes tipos de errores
+async function manejoAvanzado(url) {
+    try {
+        const response = await fetch(url);
+        
+        // Verificar específicamente diferentes códigos de estado
+        if (response.status === 404) {
+            throw new Error('Recurso no encontrado');
+        }
+        
+        if (response.status === 401) {
+            throw new Error('No autorizado - verifica tu token');
+        }
+        
+        if (response.status === 403) {
+            throw new Error('Acceso prohibido');
+        }
+        
+        if (response.status >= 500) {
+            throw new Error('Error del servidor - inténtalo más tarde');
+        }
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        
+        // Verificar si la respuesta es realmente JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType?.includes('application/json')) {
+            throw new Error('La respuesta no es JSON válido');
+        }
+        
+        return await response.json();
+        
+    } catch (error) {
+        // Diferentes tipos de errores
+        if (error instanceof TypeError) {
+            // Error de red (sin conexión, CORS, etc.)
+            console.error('Error de red:', error.message);
+        } else if (error instanceof SyntaxError) {
+            // Error al parsear JSON
+            console.error('Error de JSON:', error.message);
+        } else {
+            // Otros errores
+            console.error('Error:', error.message);
+        }
+        
+        throw error;
+    }
+}
+
+// Función auxiliar para crear errores HTTP específicos
+class HTTPError extends Error {
+    constructor(response) {
+        super(`HTTP Error: ${response.status} ${response.statusText}`);
+        this.name = 'HTTPError';
+        this.status = response.status;
+        this.response = response;
+    }
+}
+
+async function fetchConErrorPersonalizado(url) {
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+        throw new HTTPError(response);
+    }
+    
+    return response;
+}
+
+// Uso con error personalizado
+try {
+    const response = await fetchConErrorPersonalizado('/api/datos');
+    const data = await response.json();
+} catch (error) {
+    if (error instanceof HTTPError) {
+        console.log(`Error HTTP ${error.status}: ${error.message}`);
+    }
+}
+
+// Retry automático para errores temporales
+async function fetchConReintentos(url, maxReintentos = 3) {
+    for (let intento = 1; intento <= maxReintentos; intento++) {
+        try {
+            const response = await fetch(url);
+            
+            if (response.ok) {
+                return await response.json();
+            }
+            
+            // Solo reintentar en errores del servidor (5xx)
+            if (response.status < 500) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            
+            if (intento === maxReintentos) {
+                throw new Error(`Falló después de ${maxReintentos} intentos`);
+            }
+            
+            // Esperar antes del siguiente intento (backoff exponencial)
+            await new Promise(resolve => setTimeout(resolve, 1000 * intento));
+            
+        } catch (error) {
+            if (intento === maxReintentos) {
+                throw error;
+            }
+        }
+    }
+}
+                </pre>
+            </div>
+        </div>
+
+        <!-- API Playground -->
+        <div class="section">
+            <h2>🛠️ API Playground</h2>
+            <p>Construye y prueba peticiones fetch interactivamente:</p>
+
+            <div class="api-playground">
+                <h4>🎮 Constructor de Peticiones</h4>
+                
+                <div class="url-builder">
+                    <select id="methodSelect">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                        <option value="PATCH">PATCH</option>
+                    </select>
+                    <input type="text" id="urlInput" placeholder="https://jsonplaceholder.typicode.com/posts/1" value="https://jsonplaceholder.typicode.com/posts/1">
+                    <button class="button" onclick="executeCustomFetch()">🚀 Ejecutar</button>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('headers')">Headers</button>
+                    <button class="tab" onclick="switchTab('body')">Body</button>
+                    <button class="tab" onclick="switchTab('response')">Respuesta</button>
+                </div>
+
+                <div id="headers" class="tab-content active">
+                    <div class="form-group">
+                        <label>Headers (JSON format):</label>
+                        <textarea id="headersInput" rows="4" placeholder='{"Content-Type": "application/json", "Authorization": "Bearer token"}'></textarea>
+                    </div>
+                </div>
+
+                <div id="body" class="tab-content">
+                    <div class="form-group">
+                        <label>Body (JSON format):</label>
+                        <textarea id="bodyInput" rows="6" placeholder='{"title": "Mi Post", "body": "Contenido del post", "userId": 1}'></textarea>
+                    </div>
+                </div>
+
+                <div id="response" class="tab-content">
+                    <div id="playgroundOutput" class="output">Ejecuta una petición para ver la respuesta...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ejemplos Prácticos -->
+        <div class="section">
+            <h2>💼 Ejemplos Prácticos del Mundo Real</h2>
+
+            <div class="demo-area">
+                <h4>Demo: Sistema de Gestión de Posts</h4>
+                <button class="button get" onclick="listarPosts()">📋 Listar Posts</button>
+                <button class="button post" onclick="crearPostDemo()">➕ Crear Post</button>
+                <button class="button put" onclick="editarPostDemo()">✏️ Editar Post</button>
+                <button class="button delete" onclick="eliminarPostDemo()">🗑️ Eliminar Post</button>
+                <div id="postsOutput" class="output">Sistema de gestión de posts...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// Sistema completo de gestión de posts
+class PostsAPI {
+    constructor(baseURL = 'https://jsonplaceholder.typicode.com') {
+        this.baseURL = baseURL;
+        this.token = null; // Token de autenticación
+    }
+    
+    // Configurar token de autenticación
+    setToken(token) {
+        this.token = token;
+    }
+    
+    // Headers base para todas las peticiones
+    getHeaders() {
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`;
+        }
+        
+        return headers;
+    }
+    
+    // Wrapper para manejar errores consistentemente
+    async request(endpoint, options = {}) {
+        const url = `${this.baseURL}${endpoint}`;
+        const config = {
+            headers: this.getHeaders(),
+            ...options
+        };
+        
+        try {
+            const response = await fetch(url, config);
+            
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errorData}`);
+            }
+            
+            // Verificar si hay contenido para parsear
+            const contentLength = response.headers.get('content-length');
+            if (contentLength === '0' || response.status === 204) {
+                return null; // No hay contenido
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error(`Error en ${options.method || 'GET'} ${endpoint}:`, error);
+            throw error;
+        }
+    }
+    
+    // Obtener todos los posts
+    async getPosts(page = 1, limit = 10) {
+        return await this.request(`/posts?_page=${page}&_limit=${limit}`);
+    }
+    
+    // Obtener un post específico
+    async getPost(id) {
+        return await this.request(`/posts/${id}`);
+    }
+    
+    // Crear nuevo post
+    async createPost(postData) {
+        return await this.request('/posts', {
+            method: 'POST',
+            body: JSON.stringify(postData)
+        });
+    }
+    
+    // Actualizar post completo
+    async updatePost(id, postData) {
+        return await this.request(`/posts/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(postData)
+        });
+    }
+    
+    // Actualizar post parcialmente
+    async patchPost(id, changes) {
+        return await this.request(`/posts/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify(changes)
+        });
+    }
+    
+    // Eliminar post
+    async deletePost(id) {
+        return await this.request(`/posts/${id}`, {
+            method: 'DELETE'
+        });
+    }
+    
+    // Buscar posts por título
+    async searchPosts(query) {
+        return await this.request(`/posts?title_like=${encodeURIComponent(query)}`);
+    }
+    
+    // Obtener comentarios de un post
+    async getPostComments(postId) {
+        return await this.request(`/posts/${postId}/comments`);
+    }
+}
+
+// Uso del sistema
+const api = new PostsAPI();
+
+// Ejemplo de uso completo
+async function gestionarPosts() {
+    try {
+        // Listar posts
+        console.log('📋 Listando posts...');
+        const posts = await api.getPosts(1, 5);
+        console.log('Posts:', posts);
+        
+        // Crear nuevo post
+        console.log('➕ Creando nuevo post...');
+        const nuevoPost = await api.createPost({
+            title: 'Mi Nuevo Post',
+            body: 'Este es el contenido de mi post',
+            userId: 1
+        });
+        console.log('Post creado:', nuevoPost);
+        
+        // Editar post
+        console.log('✏️ Editando post...');
+        const postEditado = await api.patchPost(nuevoPost.id, {
+            title: 'Título Actualizado'
+        });
+        console.log('Post editado:', postEditado);
+        
+        // Obtener comentarios
+        console.log('💬 Obteniendo comentarios...');
+        const comentarios = await api.getPostComments(1);
+        console.log('Comentarios:', comentarios);
+        
+        // Buscar posts
+        console.log('🔍 Buscando posts...');
+        const resultados = await api.searchPosts('sunt');
+        console.log('Resultados:', resultados);
+        
+    } catch (error) {
+        console.error('❌ Error en gestión de posts:', error);
+    }
+}
+
+// Ejecutar ejemplo
+gestionarPosts();
+                </pre>
+            </div>
+
+            <div class="demo-area">
+                <h4>Demo: Upload de Archivos</h4>
+                <input type="file" id="fileInput" accept="image/*" style="margin: 10px 0;">
+                <button class="button" onclick="simularUpload()">📤 Simular Upload</button>
+                <div class="progress-bar">
+                    <div id="uploadProgress" class="progress-fill"></div>
+                </div>
+                <div id="uploadOutput" class="output">Selecciona un archivo para simular upload...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// Upload de archivos con fetch
+async function uploadFile(file, progressCallback) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('description', 'Archivo subido desde mi app');
+    
+    try {
+        const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData, // ¡NO agregues Content-Type para FormData!
+            // El navegador establecerá automáticamente el boundary correcto
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Upload falló: ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error en upload:', error);
+        throw error;
+    }
+}
+
+// Upload con barra de progreso (usando XMLHttpRequest para el progreso)
+function uploadConProgreso(file, onProgress) {
+    return new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const xhr = new XMLHttpRequest();
+        
+        // Evento de progreso
+        xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable) {
+                const percentComplete = (e.loaded / e.total) * 100;
+                onProgress(percentComplete);
+            }
+        });
+        
+        // Evento de finalización
+        xhr.addEventListener('load', () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(JSON.parse(xhr.responseText));
+            } else {
+                reject(new Error(`Upload falló: ${xhr.status}`));
+            }
+        });
+        
+        xhr.addEventListener('error', () => {
+            reject(new Error('Error de red durante upload'));
+        });
+        
+        xhr.open('POST', '/api/upload');
+        xhr.send(formData);
+    });
+}
+
+// Upload múltiple
+async function uploadMultiple(files) {
+    const uploads = Array.from(files).map(file => uploadFile(file));
+    
+    try {
+        const resultados = await Promise.all(uploads);
+        console.log('Todos los archivos subidos:', resultados);
+        return resultados;
+    } catch (error) {
+        console.error('Error en upload múltiple:', error);
+        throw error;
+    }
+}
+
+// Upload de imagen con preview
+async function uploadImagenConPreview(file) {
+    // Crear preview local
+    const preview = URL.createObjectURL(file);
+    console.log('Preview:', preview);
+    
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+        throw new Error('Solo se permiten imágenes');
+    }
+    
+    // Validar tamaño (ejemplo: máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        throw new Error('La imagen es demasiado grande (máximo 5MB)');
+    }
+    
+    try {
+        const resultado = await uploadFile(file);
+        
+        // Limpiar URL temporal
+        URL.revokeObjectURL(preview);
+        
+        return resultado;
+    } catch (error) {
+        URL.revokeObjectURL(preview);
+        throw error;
+    }
+}
+
+// Uso en HTML
+document.getElementById('fileInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    try {
+        const resultado = await uploadImagenConPreview(file);
+        console.log('Imagen subida exitosamente:', resultado);
+    } catch (error) {
+        console.error('Error:', error.message);
+    }
+});
+                </pre>
+            </div>
+        </div>
+
+        <!-- Mejores Prácticas -->
+        <div class="section">
+            <h2>🏆 Mejores Prácticas con Fetch</h2>
+            
+            <h3>✅ Lo que SÍ debes hacer:</h3>
+            <ul style="margin: 15px 0; padding-left: 30px;">
+                <li><strong>Siempre verifica response.ok</strong> antes de procesar datos</li>
+                <li><strong>Usa async/await</strong> para código más limpio</li>
+                <li><strong>Implementa manejo de errores robusto</strong> para diferentes escenarios</li>
+                <li><strong>Configura timeouts</strong> para evitar peticiones colgadas</li>
+                <li><strong>Valida el Content-Type</strong> antes de parsear respuestas</li>
+                <li><strong>Usa AbortController</strong> para cancelar peticiones</li>
+            </ul>
+            
+            <h3>❌ Lo que NO debes hacer:</h3>
+            <ul style="margin: 15px 0; padding-left: 30px;">
+                <li><strong>No asumas que fetch siempre lanza errores</strong> - verifica response.ok</li>
+                <li><strong>No ignores los headers de respuesta</strong> - contienen información valiosa</li>
+                <li><strong>No uses fetch para todo</strong> - considera otras opciones como WebSockets para tiempo real</li>
+                <li><strong>No olvides manejar casos edge</strong> como respuestas vacías o tipos MIME incorrectos</li>
+            </ul>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// ✅ FUNCIÓN FETCH COMPLETA Y ROBUSTA
+async function fetchRobusto(url, options = {}) {
+    // Configuración por defecto
+    const defaultOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        timeout: 10000, // 10 segundos
+        retries: 3
+    };
+    
+    const config = { ...defaultOptions, ...options };
+    
+    // AbortController para timeout y cancelación
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), config.timeout);
+    
+    for (let intento = 1; intento <= config.retries; intento++) {
+        try {
+            const response = await fetch(url, {
+                ...config,
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            // Verificar status HTTP
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
+            }
+            
+            // Verificar Content-Type
+            const contentType = response.headers.get('content-type');
+            
+            if (contentType?.includes('application/json')) {
+                return await response.json();
+            } else if (contentType?.includes('text/')) {
+                return await response.text();
+            } else {
+                return response; // Retornar response para otros tipos
+            }
+            
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                throw new Error('Petición cancelada por timeout');
+            }
+            
+            // Solo reintentar en errores de red o del servidor
+            if (intento === config.retries || error.message.includes('HTTP 4')) {
+                throw error;
+            }
+            
+            // Backoff exponencial
+            await new Promise(resolve => 
+                setTimeout(resolve, 1000 * Math.pow(2, intento - 1))
+            );
+        }
+    }
+}
+
+// ✅ WRAPPER PARA APIS CON INTERCEPTORES
+class APIClient {
+    constructor(baseURL) {
+        this.baseURL = baseURL;
+        this.interceptors = {
+            request: [],
+            response: []
+        };
+    }
+    
+    // Agregar interceptor de petición
+    addRequestInterceptor(interceptor) {
+        this.interceptors.request.push(interceptor);
+    }
+    
+    // Agregar interceptor de respuesta
+    addResponseInterceptor(interceptor) {
+        this.interceptors.response.push(interceptor);
+    }
+    
+    async request(endpoint, options = {}) {
+        let config = {
+            ...options,
+            url: `${this.baseURL}${endpoint}`
+        };
+        
+        // Aplicar interceptors de petición
+        for (const interceptor of this.interceptors.request) {
+            config = await interceptor(config);
+        }
+        
+        let response = await fetch(config.url, config);
+        
+        // Aplicar interceptors de respuesta
+        for (const interceptor of this.interceptors.response) {
+            response = await interceptor(response);
+        }
+        
+        return response;
+    }
+}
+
+// Uso de interceptors
+const client = new APIClient('https://api.miapp.com');
+
+// Interceptor para agregar autenticación
+client.addRequestInterceptor(async (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        config.headers = {
+            ...config.headers,
+            'Authorization': `Bearer ${token}`
+        };
+    }
+    return config;
+});
+
+// Interceptor para manejar respuestas
+client.addResponseInterceptor(async (response) => {
+    if (response.status === 401) {
+        // Token expirado
+        localStorage.removeItem('authToken');
+        window.location.href = '/login';
+    }
+    return response;
+});
+                </pre>
+            </div>
+        </div>
+
+        <!-- Resumen -->
+        <div class="section">
+            <h2>🎓 Resumen</h2>
+            <p>Has aprendido sobre:</p>
+            <div style="margin: 20px 0; padding: 20px; background: #f7fafc; border-radius: 10px;">
+                <p>🔸 <strong>Conceptos básicos</strong> de Fetch API y sus ventajas</p>
+                <p>🔸 <strong>Métodos HTTP</strong> (GET, POST, PUT, DELETE) con fetch</p>
+                <p>🔸 <strong>Configuración avanzada</strong> con headers, auth y opciones</p>
+                <p>🔸 <strong>Manejo de respuestas</strong> y diferentes tipos de contenido</p>
+                <p>🔸 <strong>Manejo robusto de errores</strong> HTTP y de red</p>
+                <p>🔸 <strong>Ejemplos prácticos</strong> del mundo real</p>
+                <p>🔸 <strong>Mejores prácticas</strong> para código productivo</p>
+            </div>
+            <p><strong>Tip:</strong> ¡Experimenta con el API Playground y copia los ejemplos para crear tus propias aplicaciones! La práctica es la clave para dominar fetch. 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentTab = 'headers';
+
+        // Función para copiar código
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = '✅ Copiado!';
+                setTimeout(() => {
+                    button.textContent = '📋 Copiar';
+                }, 2000);
+            });
+        }
+
+        // Demo: Primera petición con fetch
+        async function demoFirstFetch() {
+            const output = document.getElementById('firstFetchOutput');
+            output.innerHTML = '<div class="loading"></div>Realizando tu primera petición fetch...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+                const data = await response.json();
+                
+                output.innerHTML = `✅ ¡Tu primera petición exitosa!
+                
+📊 Datos recibidos:
+📝 Título: ${data.title}
+👤 Usuario ID: ${data.userId}
+📄 Contenido: ${data.body.substring(0, 100)}...
+
+🎉 ¡Fetch API está funcionando perfectamente!`;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        // Demo: Métodos HTTP
+        async function demoGet() {
+            const output = document.getElementById('methodOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando petición GET...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+                const data = await response.json();
+                
+                output.innerHTML = `✅ GET exitoso:
+                
+📊 Post obtenido:
+ID: ${data.id}
+Título: ${data.title}
+Usuario: ${data.userId}`;
+            } catch (error) {
+                output.innerHTML = `❌ Error GET: ${error.message}`;
+            }
+        }
+
+        async function demoPost() {
+            const output = document.getElementById('methodOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando petición POST...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: 'Mi Nuevo Post',
+                        body: 'Este es el contenido de mi post creado con fetch',
+                        userId: 1
+                    })
+                });
+                
+                const data = await response.json();
+                
+                output.innerHTML = `✅ POST exitoso:
+                
+📝 Post creado:
+ID: ${data.id}
+Título: ${data.title}
+Usuario: ${data.userId}
+Status: ${response.status}`;
+            } catch (error) {
+                output.innerHTML = `❌ Error POST: ${error.message}`;
+            }
+        }
+
+        async function demoPut() {
+            const output = document.getElementById('methodOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando petición PUT...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/1', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: 1,
+                        title: 'Post Actualizado',
+                        body: 'Contenido completamente actualizado',
+                        userId: 1
+                    })
+                });
+                
+                const data = await response.json();
+                
+                output.innerHTML = `✅ PUT exitoso:
+                
+📝 Post actualizado:
+ID: ${data.id}
+Título: ${data.title}
+Status: ${response.status}`;
+            } catch (error) {
+                output.innerHTML = `❌ Error PUT: ${error.message}`;
+            }
+        }
+
+        async function demoDelete() {
+            const output = document.getElementById('methodOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando petición DELETE...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/1', {
+                    method: 'DELETE'
+                });
+                
+                output.innerHTML = `✅ DELETE exitoso:
+                
+🗑️ Post eliminado:
+Status: ${response.status} ${response.statusText}
+${response.ok ? 'Eliminación confirmada' : 'Error en eliminación'}`;
+            } catch (error) {
+                output.innerHTML = `❌ Error DELETE: ${error.message}`;
+            }
+        }
+
+        // Demo: Configuración avanzada
+        async function demoHeaders() {
+            const output = document.getElementById('configOutput');
+            output.innerHTML = '<div class="loading"></div>Petición con headers personalizados...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Custom-Header': 'MiApp-v1.0',
+                        'User-Agent': 'Tutorial-Fetch'
+                    },
+                    body: JSON.stringify({
+                        title: 'Post con Headers',
+                        body: 'Este post fue creado con headers personalizados',
+                        userId: 1
+                    })
+                });
+                
+                const data = await response.json();
+                
+                output.innerHTML = `✅ Petición con headers exitosa:
+                
+📊 Respuesta:
+ID: ${data.id}
+Título: ${data.title}
+Headers enviados: Content-Type, Accept, X-Custom-Header`;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function demoAuth() {
+            const output = document.getElementById('configOutput');
+            output.innerHTML = '<div class="loading"></div>Simulando autenticación...';
+            
+            try {
+                // Simulamos una petición con token de autorización
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/1', {
+                    headers: {
+                        'Authorization': 'Bearer mi-token-secreto-123',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                output.innerHTML = `✅ Petición con autenticación:
+                
+🔐 Headers de autorización enviados
+📊 Datos obtenidos:
+Título: ${data.title}
+ID: ${data.id}
+
+ℹ️ En APIs reales, el token sería validado`;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function demoTimeout() {
+            const output = document.getElementById('configOutput');
+            output.innerHTML = '<div class="loading"></div>Petición con timeout...';
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/1', {
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                const data = await response.json();
+                
+                output.innerHTML = `✅ Petición completada dentro del timeout:
+                
+⏱️ Timeout configurado: 5 segundos
+📊 Datos obtenidos: ${data.title}
+✨ La petición fue más rápida que el timeout`;
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    output.innerHTML = `⏰ Timeout: La petición tardó más de 5 segundos`;
+                } else {
+                    output.innerHTML = `❌ Error: ${error.message}`;
+                }
+            }
+        }
+
+        // Demo: Información de respuesta
+        async function demoResponseInfo() {
+            const output = document.getElementById('responseOutput');
+            output.innerHTML = '<div class="loading"></div>Analizando respuesta...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+                
+                output.innerHTML = `📊 INFORMACIÓN DE LA RESPUESTA:
+
+🌐 URL: ${response.url}
+📈 Status: ${response.status} (${response.statusText})
+✅ OK: ${response.ok}
+🔄 Redirected: ${response.redirected}
+📝 Type: ${response.type}
+
+📋 HEADERS IMPORTANTES:
+Content-Type: ${response.headers.get('content-type')}
+Content-Length: ${response.headers.get('content-length')}
+Date: ${response.headers.get('date')}
+Server: ${response.headers.get('server') || 'No especificado'}
+
+⚡ Status Code Meaning:
+${response.status >= 200 && response.status < 300 ? '✅ Éxito' : 
+  response.status >= 400 && response.status < 500 ? '❌ Error del cliente' : 
+  response.status >= 500 ? '🔥 Error del servidor' : '🤔 Status desconocido'}`;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function demoResponseTypes() {
+            const output = document.getElementById('responseOutput');
+            output.innerHTML = '<div class="loading"></div>Probando diferentes tipos de respuesta...';
+            
+            try {
+                // Probar JSON
+                const jsonResponse = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+                const jsonData = await jsonResponse.json();
+                
+                // Simular respuesta de texto
+                const textResponse = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+                const textData = await textResponse.text();
+                
+                output.innerHTML = `📊 TIPOS DE RESPUESTA:
+
+📄 JSON (.json()):
+Tipo: ${typeof jsonData}
+Título: ${jsonData.title}
+
+📝 TEXT (.text()):
+Tipo: ${typeof textData}
+Longitud: ${textData.length} caracteres
+Primeros 100 chars: ${textData.substring(0, 100)}...
+
+🔍 CONTENT-TYPE DETECTADO:
+${jsonResponse.headers.get('content-type')}
+
+💡 TIP: Siempre verifica el Content-Type antes de parsear!`;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        // Demo: Errores
+        async function demoNetworkError() {
+            const output = document.getElementById('errorOutput');
+            output.innerHTML = '<div class="loading"></div>Simulando error de red...';
+            
+            try {
+                // URL que no existe para forzar error de red
+                await fetch('https://url-que-no-existe-12345.com/api');
+            } catch (error) {
+                output.innerHTML = `❌ ERROR DE RED CAPTURADO:
+
+🌐 Tipo: ${error.name}
+📝 Mensaje: ${error.message}
+
+💡 Este tipo de error SÍ es capturado por try/catch
+⚠️ Incluye: problemas de conexión, DNS, CORS, etc.`;
+            }
+        }
+
+        async function demo404Error() {
+            const output = document.getElementById('errorOutput');
+            output.innerHTML = '<div class="loading"></div>Simulando error 404...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/999999');
+                
+                output.innerHTML = `⚠️ RESPUESTA 404 (NO ES ERROR DE JAVASCRIPT):
+
+📈 Status: ${response.status}
+✅ response.ok: ${response.ok}
+📝 Status Text: ${response.statusText}
+
+💡 Fetch NO lanza error para 404
+🔧 Debes verificar response.ok manualmente`;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function demo500Error() {
+            const output = document.getElementById('errorOutput');
+            output.innerHTML = '<div class="loading"></div>Simulando error 500...';
+            
+            // Como JSONPlaceholder no tiene errores 500, simularemos la respuesta
+            output.innerHTML = `🔥 SIMULACIÓN ERROR 500:
+
+📈 Status: 500
+❌ response.ok: false
+📝 Status Text: Internal Server Error
+
+💡 Tampoco es error de JavaScript
+⚠️ Fetch solo falla en errores de RED
+🔧 Siempre verifica response.ok antes de procesar`;
+        }
+
+        async function demoProperErrorHandling() {
+            const output = document.getElementById('errorOutput');
+            output.innerHTML = '<div class="loading"></div>Demostrando manejo correcto...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/999999');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                output.innerHTML = `✅ Datos obtenidos: ${data.title}`;
+            } catch (error) {
+                output.innerHTML = `✅ MANEJO CORRECTO DE ERRORES:
+
+🎯 Error capturado: ${error.message}
+📋 Verificamos response.ok ANTES de procesar
+🔧 Lanzamos error personalizado para códigos HTTP
+
+💡 Este es el patrón correcto para fetch!`;
+            }
+        }
+
+        // Sistema de gestión de posts
+        async function listarPosts() {
+            const output = document.getElementById('postsOutput');
+            output.innerHTML = '<div class="loading"></div>Obteniendo lista de posts...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5');
+                const posts = await response.json();
+                
+                let html = '📋 LISTA DE POSTS:\n\n';
+                posts.forEach(post => {
+                    html += `📝 ID: ${post.id} - ${post.title}\n`;
+                });
+                
+                output.innerHTML = html;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function crearPostDemo() {
+            const output = document.getElementById('postsOutput');
+            output.innerHTML = '<div class="loading"></div>Creando nuevo post...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: 'Post desde Tutorial',
+                        body: 'Este post fue creado desde el tutorial de fetch',
+                        userId: 1
+                    })
+                });
+                
+                const data = await response.json();
+                
+                output.innerHTML = `✅ POST CREADO:
+
+📝 ID: ${data.id}
+📄 Título: ${data.title}
+👤 Usuario: ${data.userId}
+📊 Status: ${response.status}`;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function editarPostDemo() {
+            const output = document.getElementById('postsOutput');
+            output.innerHTML = '<div class="loading"></div>Editando post...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/1', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: 'Post Editado desde Tutorial'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                output.innerHTML = `✅ POST EDITADO:
+
+📝 ID: ${data.id}
+📄 Nuevo título: ${data.title}
+📊 Status: ${response.status}`;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function eliminarPostDemo() {
+            const output = document.getElementById('postsOutput');
+            output.innerHTML = '<div class="loading"></div>Eliminando post...';
+            
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/1', {
+                    method: 'DELETE'
+                });
+                
+                output.innerHTML = `✅ POST ELIMINADO:
+
+🗑️ Post ID: 1 eliminado
+📊 Status: ${response.status}
+${response.ok ? '✅ Eliminación confirmada' : '❌ Error en eliminación'}`;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        // Upload simulation
+        function simularUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const output = document.getElementById('uploadOutput');
+            const progress = document.getElementById('uploadProgress');
+            
+            if (!fileInput.files[0]) {
+                output.innerHTML = '⚠️ Por favor selecciona un archivo primero';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            output.innerHTML = `📤 Subiendo ${file.name} (${(file.size / 1024).toFixed(1)} KB)...`;
+            progress.style.width = '0%';
+            
+            // Simular progreso de upload
+            let width = 0;
+            const interval = setInterval(() => {
+                width += 10;
+                progress.style.width = width + '%';
+                
+                if (width >= 100) {
+                    clearInterval(interval);
+                    output.innerHTML = `✅ UPLOAD SIMULADO COMPLETADO:
+
+📁 Archivo: ${file.name}
+📊 Tamaño: ${(file.size / 1024).toFixed(1)} KB
+📝 Tipo: ${file.type}
+⏰ Tiempo: ${new Date().toLocaleTimeString()}
+
+🔗 URL simulada: https://mi-servidor.com/uploads/${file.name}`;
+                }
+            }, 200);
+        }
+
+        // API Playground
+        function switchTab(tabName) {
+            // Ocultar todas las tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Mostrar tab seleccionada
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            currentTab = tabName;
+        }
+
+        async function executeCustomFetch() {
+            const method = document.getElementById('methodSelect').value;
+            const url = document.getElementById('urlInput').value;
+            const headersText = document.getElementById('headersInput').value;
+            const bodyText = document.getElementById('bodyInput').value;
+            const output = document.getElementById('playgroundOutput');
+            
+            // Cambiar a tab de respuesta
+            switchTab('response');
+            document.querySelector('[onclick="switchTab(\'response\')"]').classList.add('active');
+            
+            output.innerHTML = '<div class="loading"></div>Ejecutando petición personalizada...';
+            
+            try {
+                // Preparar opciones
+                const options = { method };
+                
+                // Parsear headers
+                if (headersText.trim()) {
+                    try {
+                        options.headers = JSON.parse(headersText);
+                    } catch (e) {
+                        throw new Error('Headers inválidos: debe ser JSON válido');
+                    }
+                }
+                
+                // Agregar body si es necesario
+                if ((method === 'POST' || method === 'PUT' || method === 'PATCH') && bodyText.trim()) {
+                    try {
+                        JSON.parse(bodyText); // Validar JSON
+                        options.body = bodyText;
+                    } catch (e) {
+                        throw new Error('Body inválido: debe ser JSON válido');
+                    }
+                }
+                
+                const start = Date.now();
+                const response = await fetch(url, options);
+                const end = Date.now();
+                
+                // Obtener datos de respuesta
+                let responseData;
+                const contentType = response.headers.get('content-type');
+                
+                if (contentType?.includes('application/json')) {
+                    responseData = await response.json();
+                } else {
+                    responseData = await response.text();
+                }
+                
+                // Mostrar respuesta completa
+                output.innerHTML = `✅ PETICIÓN COMPLETADA:
+
+🌐 URL: ${response.url}
+📊 Status: ${response.status} ${response.statusText}
+⏱️ Tiempo: ${end - start}ms
+✅ OK: ${response.ok}
+
+📋 HEADERS DE RESPUESTA:
+${Array.from(response.headers.entries()).map(([k, v]) => `${k}: ${v}`).join('\n')}
+
+📄 DATOS:
+${typeof responseData === 'object' ? JSON.stringify(responseData, null, 2) : responseData}`;
+                
+            } catch (error) {
+                output.innerHTML = `❌ ERROR:
+
+📝 Mensaje: ${error.message}
+🔧 Verifica la URL, headers y body
+💡 Asegúrate de que la API permita CORS`;
+            }
+        }
+
+        // Inicializar valores por defecto
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('headersInput').value = JSON.stringify({
+                "Content-Type": "application/json"
+            }, null, 2);
+            
+            document.getElementById('bodyInput').value = JSON.stringify({
+                "title": "Mi Post desde Playground",
+                "body": "Contenido del post",
+                "userId": 1
+            }, null, 2);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asincronía en JavaScript - Tutorial Interactivo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .section h2 {
+            color: #4a5568;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .section h3 {
+            color: #2d3748;
+            margin: 20px 0 15px 0;
+            font-size: 1.4em;
+        }
+
+        .demo-area {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            position: relative;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background: #3182ce;
+        }
+
+        .output {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            min-height: 50px;
+            border-left: 4px solid #68d391;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .sync {
+            background: #fed7d7;
+            border-color: #f56565;
+        }
+
+        .async {
+            background: #c6f6d5;
+            border-color: #48bb78;
+        }
+
+        .timeline {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .timeline-time {
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-right: 15px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .promise-state {
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .pending {
+            background: #fbb6ce;
+            color: #702459;
+        }
+
+        .fulfilled {
+            background: #9ae6b4;
+            color: #22543d;
+        }
+
+        .rejected {
+            background: #feb2b2;
+            color: #742a2a;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Asincronía en JavaScript</h1>
+            <p>Tutorial interactivo con ejemplos prácticos</p>
+        </div>
+
+        <!-- Introducción -->
+        <div class="section">
+            <h2>🎯 ¿Qué es la Asincronía?</h2>
+            <p>La <strong>asincronía</strong> permite que el código JavaScript ejecute tareas sin bloquear el hilo principal. Esto significa que podemos realizar operaciones como peticiones HTTP, temporizadores o lectura de archivos sin que la aplicación se "congele".</p>
+            
+            <h3>Comparación: Código Síncrono vs Asíncrono</h3>
+            <div class="comparison">
+                <div class="comparison-item sync">
+                    <h4>🐌 Código Síncrono</h4>
+                    <p>Se ejecuta línea por línea, bloqueando hasta completar cada operación.</p>
+                </div>
+                <div class="comparison-item async">
+                    <h4>⚡ Código Asíncrono</h4>
+                    <p>Permite que otras operaciones continúen mientras espera que se complete una tarea.</p>
+                </div>
+            </div>
+
+            <div class="demo-area">
+                <h4>Demo: Diferencia entre Sync y Async</h4>
+                <button class="button" onclick="demoSync()">Ejecutar Código Síncrono</button>
+                <button class="button" onclick="demoAsync()">Ejecutar Código Asíncrono</button>
+                <div id="syncAsyncOutput" class="output">Haz clic en los botones para ver la diferencia...</div>
+                
+                <div class="timeline" id="timeline" style="display: none;">
+                    <h4>📊 Timeline de Ejecución:</h4>
+                    <div id="timelineContent"></div>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// CÓDIGO SÍNCRONO (Bloquea la ejecución)
+function operacionLenta() {
+    const inicio = Date.now();
+    while (Date.now() - inicio < 3000) {
+        // Simula operación lenta de 3 segundos
+    }
+    return "Operación síncrona completada";
+}
+
+console.log("Inicio");
+console.log(operacionLenta()); // Bloquea aquí por 3 segundos
+console.log("Fin");
+
+// CÓDIGO ASÍNCRONO (No bloquea)
+function operacionLentaAsync() {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve("Operación asíncrona completada");
+        }, 3000);
+    });
+}
+
+console.log("Inicio");
+operacionLentaAsync().then(resultado => {
+    console.log(resultado); // Se ejecuta después de 3 segundos
+});
+console.log("Fin"); // Se ejecuta inmediatamente
+                </pre>
+            </div>
+        </div>
+
+        <!-- setTimeout y setInterval -->
+        <div class="section">
+            <h2>⏰ setTimeout y setInterval</h2>
+            <p>Estas son las funciones más básicas para trabajar con asincronía en JavaScript.</p>
+
+            <div class="demo-area">
+                <h4>Demo: setTimeout</h4>
+                <button class="button" onclick="demoSetTimeout()">Ejecutar setTimeout</button>
+                <div class="progress-bar">
+                    <div id="timeoutProgress" class="progress-fill"></div>
+                </div>
+                <div id="timeoutOutput" class="output">Esperando ejecución...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// setTimeout - Ejecuta una función después de un tiempo determinado
+setTimeout(() => {
+    console.log("Este mensaje aparece después de 2 segundos");
+}, 2000);
+
+// setTimeout con parámetros
+function saludar(nombre, apellido) {
+    console.log(`Hola ${nombre} ${apellido}!`);
+}
+
+setTimeout(saludar, 1000, "Juan", "Pérez");
+
+// setInterval - Ejecuta una función repetidamente
+let contador = 0;
+const intervalo = setInterval(() => {
+    contador++;
+    console.log(`Contador: ${contador}`);
+    
+    if (contador >= 5) {
+        clearInterval(intervalo); // Detiene el intervalo
+        console.log("Intervalo detenido");
+    }
+}, 1000);
+                </pre>
+            </div>
+
+            <div class="demo-area">
+                <h4>Demo: setInterval</h4>
+                <button class="button" onclick="startInterval()">Iniciar Contador</button>
+                <button class="button" onclick="stopInterval()">Detener Contador</button>
+                <div id="counterOutput" class="output">Contador: 0</div>
+            </div>
+        </div>
+
+        <!-- Callbacks -->
+        <div class="section">
+            <h2>🔄 Callbacks</h2>
+            <p>Un <strong>callback</strong> es una función que se pasa como argumento a otra función y se ejecuta después de que se complete una operación asíncrona.</p>
+
+            <div class="demo-area">
+                <h4>Demo: Callbacks en Acción</h4>
+                <button class="button" onclick="demoCallbacks()">Simular Operaciones con Callbacks</button>
+                <div id="callbackOutput" class="output">Esperando operaciones...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// Función que simula una operación asíncrona
+function operacionAsincrona(datos, callback) {
+    console.log("Iniciando operación...");
+    
+    setTimeout(() => {
+        // Simula procesamiento
+        const resultado = datos.toUpperCase();
+        callback(null, resultado); // null = sin error, resultado = datos procesados
+    }, 2000);
+}
+
+// Uso del callback
+operacionAsincrona("hola mundo", (error, resultado) => {
+    if (error) {
+        console.error("Error:", error);
+    } else {
+        console.log("Resultado:", resultado); // "HOLA MUNDO"
+    }
+});
+
+// Ejemplo de callback hell (problema común)
+function paso1(callback) {
+    setTimeout(() => callback(null, "Resultado paso 1"), 1000);
+}
+
+function paso2(datos, callback) {
+    setTimeout(() => callback(null, datos + " -> Paso 2"), 1000);
+}
+
+function paso3(datos, callback) {
+    setTimeout(() => callback(null, datos + " -> Paso 3"), 1000);
+}
+
+// Callback Hell (difícil de leer y mantener)
+paso1((err, resultado1) => {
+    if (!err) {
+        paso2(resultado1, (err, resultado2) => {
+            if (!err) {
+                paso3(resultado2, (err, resultado3) => {
+                    if (!err) {
+                        console.log("Final:", resultado3);
+                    }
+                });
+            }
+        });
+    }
+});
+                </pre>
+            </div>
+        </div>
+
+        <!-- Promesas -->
+        <div class="section">
+            <h2>🤝 Promesas (Promises)</h2>
+            <p>Las <strong>Promesas</strong> son una forma más elegante de manejar operaciones asíncronas. Una promesa representa un valor que puede estar disponible ahora, en el futuro, o nunca.</p>
+
+            <h3>Estados de una Promesa</h3>
+            <div style="display: flex; justify-content: space-around; margin: 20px 0;">
+                <div class="promise-state pending">Pending (Pendiente)</div>
+                <div class="promise-state fulfilled">Fulfilled (Cumplida)</div>
+                <div class="promise-state rejected">Rejected (Rechazada)</div>
+            </div>
+
+            <div class="demo-area">
+                <h4>Demo: Crear y Usar Promesas</h4>
+                <button class="button" onclick="demoPromiseSuccess()">Promesa Exitosa</button>
+                <button class="button" onclick="demoPromiseError()">Promesa con Error</button>
+                <button class="button" onclick="demoPromiseChain()">Cadena de Promesas</button>
+                <div id="promiseOutput" class="output">Ejecuta una promesa...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// Crear una promesa básica
+const miPromesa = new Promise((resolve, reject) => {
+    const exito = Math.random() > 0.5; // 50% de probabilidad
+    
+    setTimeout(() => {
+        if (exito) {
+            resolve("¡Operación exitosa!"); // Promesa cumplida
+        } else {
+            reject("Algo salió mal"); // Promesa rechazada
+        }
+    }, 2000);
+});
+
+// Usar la promesa
+miPromesa
+    .then(resultado => {
+        console.log("Éxito:", resultado);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    })
+    .finally(() => {
+        console.log("Operación completada (siempre se ejecuta)");
+    });
+
+// Función que retorna una promesa
+function obtenerDatos(url) {
+    return new Promise((resolve, reject) => {
+        // Simula una petición HTTP
+        setTimeout(() => {
+            if (url) {
+                resolve({ datos: "Información del servidor", url: url });
+            } else {
+                reject(new Error("URL no proporcionada"));
+            }
+        }, 1500);
+    });
+}
+
+// Uso
+obtenerDatos("https://api.ejemplo.com/datos")
+    .then(respuesta => {
+        console.log("Datos recibidos:", respuesta);
+        return respuesta.datos; // Pasar datos al siguiente .then
+    })
+    .then(datos => {
+        console.log("Procesando:", datos);
+    })
+    .catch(error => {
+        console.error("Error al obtener datos:", error.message);
+    });
+                </pre>
+            </div>
+
+            <div class="demo-area">
+                <h4>Demo: Promise.all() y Promise.race()</h4>
+                <button class="button" onclick="demoPromiseAll()">Promise.all()</button>
+                <button class="button" onclick="demoPromiseRace()">Promise.race()</button>
+                <div id="promiseAllOutput" class="output">Prueba Promise.all() y Promise.race()...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// Promise.all() - Espera a que TODAS las promesas se resuelvan
+const promesa1 = new Promise(resolve => setTimeout(() => resolve("Primera"), 1000));
+const promesa2 = new Promise(resolve => setTimeout(() => resolve("Segunda"), 2000));
+const promesa3 = new Promise(resolve => setTimeout(() => resolve("Tercera"), 1500));
+
+Promise.all([promesa1, promesa2, promesa3])
+    .then(resultados => {
+        console.log("Todos los resultados:", resultados);
+        // ["Primera", "Segunda", "Tercera"]
+    })
+    .catch(error => {
+        console.error("Una de las promesas falló:", error);
+    });
+
+// Promise.race() - Resuelve con la PRIMERA promesa que se complete
+Promise.race([promesa1, promesa2, promesa3])
+    .then(primerResultado => {
+        console.log("Primer resultado:", primerResultado); // "Primera"
+    });
+
+// Promise.allSettled() - Espera a que todas terminen (sin importar si fallan)
+Promise.allSettled([promesa1, promesa2, promesa3])
+    .then(resultados => {
+        resultados.forEach((resultado, indice) => {
+            if (resultado.status === 'fulfilled') {
+                console.log(`Promesa ${indice + 1} exitosa:`, resultado.value);
+            } else {
+                console.log(`Promesa ${indice + 1} falló:`, resultado.reason);
+            }
+        });
+    });
+                </pre>
+            </div>
+        </div>
+
+        <!-- Async/Await -->
+        <div class="section">
+            <h2>✨ Async/Await</h2>
+            <p><strong>Async/Await</strong> es una sintaxis más moderna y legible para trabajar con promesas. Hace que el código asíncrono se vea como código síncrono.</p>
+
+            <div class="demo-area">
+                <h4>Demo: Async/Await vs Promesas</h4>
+                <button class="button" onclick="demoAsyncAwait()">Función Async/Await</button>
+                <button class="button" onclick="demoAsyncError()">Manejo de Errores</button>
+                <div id="asyncOutput" class="output">Ejecuta funciones async...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// Función asíncrona básica
+async function miFuncionAsincrona() {
+    console.log("Iniciando función async");
+    
+    // await pausa la función hasta que la promesa se resuelva
+    const resultado = await new Promise(resolve => {
+        setTimeout(() => resolve("Datos obtenidos!"), 2000);
+    });
+    
+    console.log(resultado);
+    return resultado;
+}
+
+// Llamar función async
+miFuncionAsincrona()
+    .then(resultado => console.log("Función completada:", resultado));
+
+// Comparación: Con promesas vs con async/await
+// CON PROMESAS (más verboso)
+function obtenerUsuario(id) {
+    return fetch(`/api/usuario/${id}`)
+        .then(response => response.json())
+        .then(usuario => {
+            return fetch(`/api/posts/${usuario.id}`);
+        })
+        .then(response => response.json())
+        .then(posts => {
+            return { usuario, posts };
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+}
+
+// CON ASYNC/AWAIT (más limpio y legible)
+async function obtenerUsuarioAsync(id) {
+    try {
+        const response = await fetch(`/api/usuario/${id}`);
+        const usuario = await response.json();
+        
+        const postsResponse = await fetch(`/api/posts/${usuario.id}`);
+        const posts = await postsResponse.json();
+        
+        return { usuario, posts };
+    } catch (error) {
+        console.error("Error:", error);
+        throw error; // Re-lanzar el error si es necesario
+    }
+}
+
+// Múltiples operaciones en paralelo con async/await
+async function operacionesEnParalelo() {
+    try {
+        // Estas se ejecutan en paralelo
+        const [usuario, config, notificaciones] = await Promise.all([
+            obtenerUsuario(1),
+            obtenerConfiguracion(),
+            obtenerNotificaciones()
+        ]);
+        
+        console.log("Todos los datos obtenidos:", { usuario, config, notificaciones });
+    } catch (error) {
+        console.error("Error en operaciones paralelas:", error);
+    }
+}
+                </pre>
+            </div>
+
+            <div class="demo-area">
+                <h4>Demo: Async/Await con Múltiples Operaciones</h4>
+                <button class="button" onclick="demoMultipleAsync()">Operaciones Secuenciales</button>
+                <button class="button" onclick="demoParallelAsync()">Operaciones en Paralelo</button>
+                <div id="multipleAsyncOutput" class="output">Compara operaciones secuenciales vs paralelas...</div>
+            </div>
+        </div>
+
+        <!-- Ejemplos Prácticos -->
+        <div class="section">
+            <h2>🛠️ Ejemplos Prácticos</h2>
+            
+            <div class="demo-area">
+                <h4>Demo: Simulador de API</h4>
+                <button class="button" onclick="demoApiCall()">Llamada a API</button>
+                <button class="button" onclick="demoApiError()">API con Error</button>
+                <div id="apiOutput" class="output">Simula llamadas a una API...</div>
+                <div class="progress-bar">
+                    <div id="apiProgress" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// Simulador de API con diferentes respuestas
+class APISimulador {
+    static async obtenerUsuarios() {
+        // Simula tiempo de respuesta variable
+        const tiempoRespuesta = Math.random() * 3000 + 1000; // 1-4 segundos
+        
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                // 80% de probabilidad de éxito
+                if (Math.random() > 0.2) {
+                    resolve([
+                        { id: 1, nombre: "Ana García", email: "ana@email.com" },
+                        { id: 2, nombre: "Carlos López", email: "carlos@email.com" },
+                        { id: 3, nombre: "María Rodríguez", email: "maria@email.com" }
+                    ]);
+                } else {
+                    reject(new Error("Error del servidor: 500"));
+                }
+            }, tiempoRespuesta);
+        });
+    }
+    
+    static async obtenerPosts(usuarioId) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (usuarioId) {
+                    resolve([
+                        { id: 1, titulo: "Mi primer post", contenido: "Contenido del post..." },
+                        { id: 2, titulo: "Segundo post", contenido: "Más contenido..." }
+                    ]);
+                } else {
+                    reject(new Error("ID de usuario requerido"));
+                }
+            }, 1500);
+        });
+    }
+}
+
+// Función para cargar datos de usuario completos
+async function cargarDatosCompletos(usuarioId) {
+    const loadingElement = document.getElementById('loading');
+    
+    try {
+        loadingElement.style.display = 'block';
+        console.log("🔄 Cargando datos del usuario...");
+        
+        // Operaciones en paralelo para mejor rendimiento
+        const [usuarios, posts] = await Promise.all([
+            APISimulador.obtenerUsuarios(),
+            APISimulador.obtenerPosts(usuarioId)
+        ]);
+        
+        const usuario = usuarios.find(u => u.id === usuarioId);
+        
+        console.log("✅ Datos cargados exitosamente:");
+        console.log("👤 Usuario:", usuario);
+        console.log("📝 Posts:", posts);
+        
+        return { usuario, posts };
+        
+    } catch (error) {
+        console.error("❌ Error al cargar datos:", error.message);
+        throw error;
+    } finally {
+        loadingElement.style.display = 'none';
+    }
+}
+
+// Uso de la función
+cargarDatosCompletos(1)
+    .then(datos => {
+        console.log("Procesando datos:", datos);
+    })
+    .catch(error => {
+        console.error("Error final:", error);
+    });
+                </pre>
+            </div>
+
+            <div class="demo-area">
+                <h4>Demo: Sistema de Notificaciones Asíncronas</h4>
+                <button class="button" onclick="iniciarNotificaciones()">Iniciar Sistema</button>
+                <button class="button" onclick="detenerNotificaciones()">Detener Sistema</button>
+                <div id="notificationOutput" class="output">Sistema de notificaciones inactivo...</div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// Sistema de notificaciones asíncronas
+class SistemaNotificaciones {
+    constructor() {
+        this.activo = false;
+        this.intervalo = null;
+        this.contadorNotificaciones = 0;
+    }
+    
+    // Simula recibir notificaciones del servidor
+    async recibirNotificacion() {
+        return new Promise(resolve => {
+            // Simula tiempo variable para recibir notificaciones
+            const tiempoEspera = Math.random() * 5000 + 2000; // 2-7 segundos
+            
+            setTimeout(() => {
+                this.contadorNotificaciones++;
+                const tipos = ['mensaje', 'comentario', 'like', 'seguidor'];
+                const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+                
+                resolve({
+                    id: this.contadorNotificaciones,
+                    tipo: tipo,
+                    mensaje: `Nueva notificación de ${tipo}`,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+            }, tiempoEspera);
+        });
+    }
+    
+    // Procesa una notificación
+    async procesarNotificacion(notificacion) {
+        console.log(`🔔 ${notificacion.timestamp}: ${notificacion.mensaje}`);
+        
+        // Simula procesamiento (guardar en base de datos, enviar push, etc.)
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        return `Notificación ${notificacion.id} procesada`;
+    }
+    
+    // Inicia el sistema de notificaciones
+    async iniciar() {
+        this.activo = true;
+        console.log("🚀 Sistema de notificaciones iniciado");
+        
+        while (this.activo) {
+            try {
+                // Espera por una nueva notificación
+                const notificacion = await this.recibirNotificacion();
+                
+                // Procesa la notificación sin bloquear
+                this.procesarNotificacion(notificacion);
+                
+            } catch (error) {
+                console.error("❌ Error en notificación:", error);
+                // Espera antes de intentar de nuevo
+                await new Promise(resolve => setTimeout(resolve, 3000));
+            }
+        }
+        
+        console.log("⏹️ Sistema de notificaciones detenido");
+    }
+    
+    detener() {
+        this.activo = false;
+    }
+}
+
+// Uso del sistema
+const sistemaNotif = new SistemaNotificaciones();
+
+// Iniciar sistema
+sistemaNotif.iniciar();
+
+// Detener después de 30 segundos
+setTimeout(() => {
+    sistemaNotif.detener();
+}, 30000);
+                </pre>
+            </div>
+        </div>
+
+        <!-- Mejores Prácticas -->
+        <div class="section">
+            <h2>🏆 Mejores Prácticas</h2>
+            
+            <h3>✅ Lo que SÍ debes hacer:</h3>
+            <ul style="margin: 15px 0; padding-left: 30px;">
+                <li><strong>Usa async/await</strong> para código más legible</li>
+                <li><strong>Maneja errores</strong> siempre con try/catch o .catch()</li>
+                <li><strong>Usa Promise.all()</strong> para operaciones en paralelo</li>
+                <li><strong>Evita callback hell</strong> usando promesas o async/await</li>
+                <li><strong>Proporciona feedback</strong> al usuario durante operaciones largas</li>
+            </ul>
+            
+            <h3>❌ Lo que NO debes hacer:</h3>
+            <ul style="margin: 15px 0; padding-left: 30px;">
+                <li><strong>No uses async/await en bucles</strong> sin considerar el rendimiento</li>
+                <li><strong>No olvides manejar errores</strong> en operaciones asíncronas</li>
+                <li><strong>No bloquees el hilo principal</strong> con operaciones síncronas largas</li>
+                <li><strong>No uses setTimeout</strong> como solución para problemas de timing</li>
+            </ul>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copiar</button>
+                <pre>
+// ✅ BUENAS PRÁCTICAS
+
+// 1. Siempre manejar errores
+async function operacionSegura() {
+    try {
+        const resultado = await operacionQueP​uedeFallar();
+        return resultado;
+    } catch (error) {
+        console.error("Error manejado:", error);
+        // Proporcionar valor por defecto o re-lanzar si es necesario
+        return null;
+    }
+}
+
+// 2. Operaciones en paralelo cuando sea posible
+async function cargarDatosEficientemente() {
+    // ✅ En paralelo (más rápido)
+    const [usuarios, productos, configuracion] = await Promise.all([
+        obtenerUsuarios(),
+        obtenerProductos(),
+        obtenerConfiguracion()
+    ]);
+    
+    return { usuarios, productos, configuracion };
+}
+
+// ❌ Evitar esto (secuencial innecesario)
+async function cargarDatosLentamente() {
+    const usuarios = await obtenerUsuarios();      // Espera 2s
+    const productos = await obtenerProductos();    // Espera otros 2s
+    const configuracion = await obtenerConfiguracion(); // Espera otros 2s
+    // Total: 6 segundos en lugar de 2
+    
+    return { usuarios, productos, configuracion };
+}
+
+// 3. Timeout para operaciones que pueden colgarse
+function conTimeout(promesa, tiempo) {
+    return Promise.race([
+        promesa,
+        new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Timeout')), tiempo)
+        )
+    ]);
+}
+
+// Uso
+try {
+    const resultado = await conTimeout(operacionLenta(), 5000);
+    console.log(resultado);
+} catch (error) {
+    if (error.message === 'Timeout') {
+        console.log("La operación tardó demasiado");
+    }
+}
+
+// 4. Cancelación de operaciones
+class OperacionCancelable {
+    constructor() {
+        this.controlador = new AbortController();
+    }
+    
+    async ejecutar() {
+        try {
+            const response = await fetch('/api/datos', {
+                signal: this.controlador.signal
+            });
+            return await response.json();
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                console.log('Operación cancelada');
+            } else {
+                throw error;
+            }
+        }
+    }
+    
+    cancelar() {
+        this.controlador.abort();
+    }
+}
+                </pre>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="section">
+            <h2>🎓 Resumen</h2>
+            <p>Has aprendido sobre:</p>
+            <div style="margin: 20px 0; padding: 20px; background: #f7fafc; border-radius: 10px;">
+                <p>🔸 <strong>Conceptos básicos</strong> de asincronía en JavaScript</p>
+                <p>🔸 <strong>setTimeout y setInterval</strong> para operaciones temporizadas</p>
+                <p>🔸 <strong>Callbacks</strong> y el problema del "callback hell"</p>
+                <p>🔸 <strong>Promesas</strong> y sus métodos (.then, .catch, .finally)</p>
+                <p>🔸 <strong>Async/Await</strong> para código más limpio y legible</p>
+                <p>🔸 <strong>Mejores prácticas</strong> para escribir código asíncrono eficiente</p>
+            </div>
+            <p><strong>Tip:</strong> Copia y pega cualquier ejemplo de código en tu propio archivo HTML para experimentar y aprender haciendo. ¡La práctica hace al maestro! 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        let timelineCounter = 0;
+        let intervalId = null;
+        let counterValue = 0;
+        let notificationSystem = null;
+
+        // Función para copiar código
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = '✅ Copiado!';
+                setTimeout(() => {
+                    button.textContent = '📋 Copiar';
+                }, 2000);
+            });
+        }
+
+        // Función para agregar elementos al timeline
+        function addToTimeline(message, time) {
+            const timeline = document.getElementById('timeline');
+            const timelineContent = document.getElementById('timelineContent');
+            
+            timeline.style.display = 'block';
+            
+            const item = document.createElement('div');
+            item.className = 'timeline-item';
+            item.innerHTML = `
+                <div class="timeline-time">${time}ms</div>
+                <div>${message}</div>
+            `;
+            
+            timelineContent.appendChild(item);
+        }
+
+        // Demo síncrono vs asíncrono
+        function demoSync() {
+            const output = document.getElementById('syncAsyncOutput');
+            const timelineContent = document.getElementById('timelineContent');
+            timelineContent.innerHTML = '';
+            
+            const start = Date.now();
+            output.innerHTML = '<div class="loading"></div>Ejecutando código síncrono...';
+            
+            addToTimeline('Inicio código síncrono', 0);
+            
+            setTimeout(() => {
+                // Simula operación síncrona bloqueante
+                const blockStart = Date.now();
+                while (Date.now() - blockStart < 2000) {
+                    // Bloquea por 2 segundos
+                }
+                
+                addToTimeline('Operación síncrona completada (bloqueó la ejecución)', Date.now() - start);
+                addToTimeline('Fin del código', Date.now() - start);
+                output.innerHTML = '🐌 Código síncrono completado. Nota cómo la página se bloqueó durante 2 segundos.';
+            }, 100);
+        }
+
+        function demoAsync() {
+            const output = document.getElementById('syncAsyncOutput');
+            const timelineContent = document.getElementById('timelineContent');
+            timelineContent.innerHTML = '';
+            
+            const start = Date.now();
+            output.innerHTML = '<div class="loading"></div>Ejecutando código asíncrono...';
+            
+            addToTimeline('Inicio código asíncrono', 0);
+            addToTimeline('Código continúa ejecutándose (no se bloquea)', 50);
+            
+            setTimeout(() => {
+                addToTimeline('Operación asíncrona completada', Date.now() - start);
+                output.innerHTML = '⚡ Código asíncrono completado. La página nunca se bloqueó!';
+            }, 2000);
+        }
+
+        // Demo setTimeout
+        function demoSetTimeout() {
+            const output = document.getElementById('timeoutOutput');
+            const progress = document.getElementById('timeoutProgress');
+            
+            output.innerHTML = '<div class="loading"></div>Esperando 3 segundos...';
+            progress.style.width = '0%';
+            
+            // Simular progreso
+            let width = 0;
+            const progressInterval = setInterval(() => {
+                width += 10;
+                progress.style.width = width + '%';
+                if (width >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, 300);
+            
+            setTimeout(() => {
+                output.innerHTML = '✅ setTimeout ejecutado después de 3 segundos!';
+            }, 3000);
+        }
+
+        // Demo setInterval
+        function startInterval() {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+            
+            counterValue = 0;
+            const output = document.getElementById('counterOutput');
+            
+            intervalId = setInterval(() => {
+                counterValue++;
+                output.innerHTML = `Contador: ${counterValue}`;
+                
+                if (counterValue >= 10) {
+                    clearInterval(intervalId);
+                    output.innerHTML += ' - ¡Contador detenido automáticamente!';
+                    intervalId = null;
+                }
+            }, 500);
+        }
+
+        function stopInterval() {
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+                document.getElementById('counterOutput').innerHTML += ' - Detenido manualmente';
+            }
+        }
+
+        // Demo Callbacks
+        function demoCallbacks() {
+            const output = document.getElementById('callbackOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando operaciones con callbacks...';
+            
+            function operacion1(callback) {
+                setTimeout(() => {
+                    callback(null, 'Operación 1 completada');
+                }, 1000);
+            }
+            
+            function operacion2(datos, callback) {
+                setTimeout(() => {
+                    callback(null, datos + ' → Operación 2 completada');
+                }, 1000);
+            }
+            
+            function operacion3(datos, callback) {
+                setTimeout(() => {
+                    callback(null, datos + ' → Operación 3 completada');
+                }, 1000);
+            }
+            
+            operacion1((err, resultado1) => {
+                if (!err) {
+                    output.innerHTML = `📝 ${resultado1}`;
+                    operacion2(resultado1, (err, resultado2) => {
+                        if (!err) {
+                            output.innerHTML = `📝 ${resultado2}`;
+                            operacion3(resultado2, (err, resultado3) => {
+                                if (!err) {
+                                    output.innerHTML = `✅ ${resultado3}`;
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // Demo Promesas
+        function demoPromiseSuccess() {
+            const output = document.getElementById('promiseOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando promesa exitosa...';
+            
+            const promesa = new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve('¡Promesa cumplida exitosamente!');
+                }, 2000);
+            });
+            
+            promesa
+                .then(resultado => {
+                    output.innerHTML = `✅ ${resultado}`;
+                })
+                .catch(error => {
+                    output.innerHTML = `❌ Error: ${error}`;
+                });
+        }
+
+        function demoPromiseError() {
+            const output = document.getElementById('promiseOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando promesa con error...';
+            
+            const promesa = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    reject('Error simulado en la promesa');
+                }, 2000);
+            });
+            
+            promesa
+                .then(resultado => {
+                    output.innerHTML = `✅ ${resultado}`;
+                })
+                .catch(error => {
+                    output.innerHTML = `❌ Error capturado: ${error}`;
+                });
+        }
+
+        function demoPromiseChain() {
+            const output = document.getElementById('promiseOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando cadena de promesas...';
+            
+            Promise.resolve('Inicio')
+                .then(resultado => {
+                    output.innerHTML = `📝 ${resultado}`;
+                    return new Promise(resolve => {
+                        setTimeout(() => resolve(resultado + ' → Paso 1'), 1000);
+                    });
+                })
+                .then(resultado => {
+                    output.innerHTML = `📝 ${resultado}`;
+                    return new Promise(resolve => {
+                        setTimeout(() => resolve(resultado + ' → Paso 2'), 1000);
+                    });
+                })
+                .then(resultado => {
+                    output.innerHTML = `✅ ${resultado} → ¡Cadena completada!`;
+                })
+                .catch(error => {
+                    output.innerHTML = `❌ Error en la cadena: ${error}`;
+                });
+        }
+
+        function demoPromiseAll() {
+            const output = document.getElementById('promiseAllOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando Promise.all()...';
+            
+            const promesa1 = new Promise(resolve => setTimeout(() => resolve('Tarea 1'), 1000));
+            const promesa2 = new Promise(resolve => setTimeout(() => resolve('Tarea 2'), 2000));
+            const promesa3 = new Promise(resolve => setTimeout(() => resolve('Tarea 3'), 1500));
+            
+            Promise.all([promesa1, promesa2, promesa3])
+                .then(resultados => {
+                    output.innerHTML = `✅ Promise.all() completado: [${resultados.join(', ')}]`;
+                })
+                .catch(error => {
+                    output.innerHTML = `❌ Error en Promise.all(): ${error}`;
+                });
+        }
+
+        function demoPromiseRace() {
+            const output = document.getElementById('promiseAllOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando Promise.race()...';
+            
+            const promesa1 = new Promise(resolve => setTimeout(() => resolve('Tarea lenta (3s)'), 3000));
+            const promesa2 = new Promise(resolve => setTimeout(() => resolve('Tarea rápida (1s)'), 1000));
+            const promesa3 = new Promise(resolve => setTimeout(() => resolve('Tarea media (2s)'), 2000));
+            
+            Promise.race([promesa1, promesa2, promesa3])
+                .then(resultado => {
+                    output.innerHTML = `🏆 Promise.race() ganador: ${resultado}`;
+                })
+                .catch(error => {
+                    output.innerHTML = `❌ Error en Promise.race(): ${error}`;
+                });
+        }
+
+        // Demo Async/Await
+        async function demoAsyncAwait() {
+            const output = document.getElementById('asyncOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando función async/await...';
+            
+            try {
+                const resultado1 = await new Promise(resolve => {
+                    setTimeout(() => resolve('Primera operación'), 1000);
+                });
+                
+                output.innerHTML = `📝 ${resultado1}`;
+                
+                const resultado2 = await new Promise(resolve => {
+                    setTimeout(() => resolve(resultado1 + ' → Segunda operación'), 1000);
+                });
+                
+                output.innerHTML = `✅ ${resultado2} → ¡Async/await completado!`;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error}`;
+            }
+        }
+
+        async function demoAsyncError() {
+            const output = document.getElementById('asyncOutput');
+            output.innerHTML = '<div class="loading"></div>Probando manejo de errores...';
+            
+            try {
+                await new Promise((resolve, reject) => {
+                    setTimeout(() => reject('Error simulado'), 2000);
+                });
+            } catch (error) {
+                output.innerHTML = `✅ Error capturado con try/catch: ${error}`;
+            }
+        }
+
+        async function demoMultipleAsync() {
+            const output = document.getElementById('multipleAsyncOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando operaciones secuenciales...';
+            
+            const start = Date.now();
+            
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                output.innerHTML = '📝 Operación 1 completada (secuencial)';
+                
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                output.innerHTML = '📝 Operación 2 completada (secuencial)';
+                
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                const time = Date.now() - start;
+                output.innerHTML = `✅ Todas las operaciones completadas secuencialmente en ${time}ms`;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error}`;
+            }
+        }
+
+        async function demoParallelAsync() {
+            const output = document.getElementById('multipleAsyncOutput');
+            output.innerHTML = '<div class="loading"></div>Ejecutando operaciones en paralelo...';
+            
+            const start = Date.now();
+            
+            try {
+                await Promise.all([
+                    new Promise(resolve => setTimeout(resolve, 1000)),
+                    new Promise(resolve => setTimeout(resolve, 1000)),
+                    new Promise(resolve => setTimeout(resolve, 1000))
+                ]);
+                
+                const time = Date.now() - start;
+                output.innerHTML = `⚡ Todas las operaciones completadas en paralelo en ${time}ms (¡3x más rápido!)`;
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error}`;
+            }
+        }
+
+        // Demo API
+        async function demoApiCall() {
+            const output = document.getElementById('apiOutput');
+            const progress = document.getElementById('apiProgress');
+            
+            output.innerHTML = '<div class="loading"></div>Realizando llamada a API...';
+            progress.style.width = '0%';
+            
+            // Simular progreso
+            let width = 0;
+            const progressInterval = setInterval(() => {
+                width += 20;
+                progress.style.width = width + '%';
+                if (width >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, 400);
+            
+            try {
+                const response = await new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve({
+                            status: 200,
+                            data: [
+                                { id: 1, nombre: 'Usuario 1', email: 'user1@email.com' },
+                                { id: 2, nombre: 'Usuario 2', email: 'user2@email.com' }
+                            ]
+                        });
+                    }, 2000);
+                });
+                
+                output.innerHTML = `✅ API Response: ${JSON.stringify(response.data, null, 2)}`;
+            } catch (error) {
+                output.innerHTML = `❌ Error en API: ${error}`;
+            }
+        }
+
+        async function demoApiError() {
+            const output = document.getElementById('apiOutput');
+            const progress = document.getElementById('apiProgress');
+            
+            output.innerHTML = '<div class="loading"></div>Simulando error de API...';
+            progress.style.width = '0%';
+            
+            try {
+                await new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        progress.style.width = '100%';
+                        reject('Error 500: Servidor no disponible');
+                    }, 2000);
+                });
+            } catch (error) {
+                output.innerHTML = `❌ Error capturado: ${error}`;
+            }
+        }
+
+        // Sistema de notificaciones
+        class NotificationSystem {
+            constructor() {
+                this.active = false;
+                this.counter = 0;
+            }
+            
+            async receiveNotification() {
+                return new Promise(resolve => {
+                    const waitTime = Math.random() * 3000 + 1000;
+                    setTimeout(() => {
+                        this.counter++;
+                        const types = ['mensaje', 'comentario', 'like', 'seguidor'];
+                        const type = types[Math.floor(Math.random() * types.length)];
+                        
+                        resolve({
+                            id: this.counter,
+                            type: type,
+                            message: `Nueva notificación: ${type}`,
+                            timestamp: new Date().toLocaleTimeString()
+                        });
+                    }, waitTime);
+                });
+            }
+            
+            async start() {
+                this.active = true;
+                const output = document.getElementById('notificationOutput');
+                output.innerHTML = '🚀 Sistema de notificaciones activo...\n';
+                
+                while (this.active) {
+                    try {
+                        const notification = await this.receiveNotification();
+                        output.innerHTML += `🔔 ${notification.timestamp}: ${notification.message}\n`;
+                        output.scrollTop = output.scrollHeight;
+                        
+                        if (this.counter >= 5) {
+                            this.stop();
+                        }
+                    } catch (error) {
+                        output.innerHTML += `❌ Error: ${error}\n`;
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                    }
+                }
+                
+                output.innerHTML += '⏹️ Sistema detenido\n';
+            }
+            
+            stop() {
+                this.active = false;
+            }
+        }
+
+        function iniciarNotificaciones() {
+            if (notificationSystem) {
+                notificationSystem.stop();
+            }
+            notificationSystem = new NotificationSystem();
+            notificationSystem.start();
+        }
+
+        function detenerNotificaciones() {
+            if (notificationSystem) {
+                notificationSystem.stop();
+            }
+        }
+    </script>
+</body>
+</html>

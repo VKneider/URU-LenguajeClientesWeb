@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokeball Background</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .pokeball-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .pokeball {
+            width: 80vmin;
+            height: 80vmin;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 
+                0 0 50px rgba(0, 0, 0, 0.3),
+                inset 0 0 50px rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Mitad superior roja */
+        .pokeball::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(135deg, #ff4757, #c44569);
+            border-radius: 100% 100% 0 0;
+            box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Mitad inferior blanca */
+        .pokeball::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(135deg, #f1f2f6, #ddd);
+            border-radius: 0 0 100% 100%;
+            box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Banda central negra */
+        .pokeball-band {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 8%;
+            background: linear-gradient(180deg, #2f3542, #57606f);
+            transform: translateY(-50%);
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Botón central de la pokeball */
+        .pokeball-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20%;
+            height: 20%;
+            background: radial-gradient(circle, #f1f2f6, #ddd);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            border: 4px solid #2f3542;
+            box-shadow: 
+                0 0 20px rgba(0, 0, 0, 0.4),
+                inset 0 2px 4px rgba(255, 255, 255, 0.8),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 3;
+        }
+
+        /* Highlight del botón */
+        .pokeball-button::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 30%;
+            width: 40%;
+            height: 40%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent);
+            border-radius: 50%;
+        }
+
+        /* Botón interno */
+        .pokeball-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50%;
+            height: 50%;
+            background: linear-gradient(135deg, #ff6b7a, #c44569);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.5),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Contenedor central cuadrado */
+        .central-container {
+            position: relative;
+            z-index: 10;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px solid #2f3542;
+            border-radius: 15px;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 1px 3px rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efecto de brillo en el contenedor */
+        .central-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            animation: shine 3s infinite;
+        }
+
+        /* Efecto de esquinas brillantes */
+        .central-container::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            pointer-events: none;
+        }
+
+        /* Animaciones */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-10px) rotate(1deg);
+            }
+            50% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            75% {
+                transform: translateY(10px) rotate(-1deg);
+            }
+        }
+
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* Efectos de partículas flotantes */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, #fff, transparent);
+            border-radius: 50%;
+            animation: particle-float 4s infinite linear;
+            opacity: 0.7;
+        }
+
+        .particle:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+            animation-duration: 3s;
+        }
+
+        .particle:nth-child(2) {
+            top: 60%;
+            left: 80%;
+            animation-delay: 1s;
+            animation-duration: 4s;
+        }
+
+        .particle:nth-child(3) {
+            top: 80%;
+            left: 20%;
+            animation-delay: 2s;
+            animation-duration: 5s;
+        }
+
+        .particle:nth-child(4) {
+            top: 30%;
+            left: 70%;
+            animation-delay: 0.5s;
+            animation-duration: 3.5s;
+        }
+
+        .particle:nth-child(5) {
+            top: 70%;
+            left: 40%;
+            animation-delay: 1.5s;
+            animation-duration: 4.5s;
+        }
+
+        @keyframes particle-float {
+            0% {
+                transform: translateY(0px) scale(1);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .pokeball {
+                width: 90vmin;
+                height: 90vmin;
+            }
+            
+            .central-container {
+                width: 250px;
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .central-container {
+                width: 200px;
+                height: 200px;
+            }
+        }
+
+        /* Texto placeholder para mostrar que está vacío */
+        .placeholder-text {
+            color: #7f8c8d;
+            font-size: 18px;
+            text-align: center;
+            opacity: 0.5;
+            user-select: none;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo con pokeball -->
+    <div class="pokeball-background">
+        <div class="pokeball">
+            <div class="pokeball-band"></div>
+            <div class="pokeball-button"></div>
+        </div>
+        
+        <!-- Partículas flotantes -->
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Contenedor central cuadrado (vacío) -->
+    <div class="central-container">
+        <div class="placeholder-text">Contenedor Vacío</div>
+    </div>
+</body>
+</html>
