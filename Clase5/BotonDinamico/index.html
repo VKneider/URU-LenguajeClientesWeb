@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Componente Dinámico Avanzado</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(120deg, #1e90ff, #ff6347);
+        }
+
+        /* Contenedor del componente */
+        .dynamic-component {
+            text-align: center;
+            color: #fff;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Botón avanzado */
+        .advanced-button {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background: linear-gradient(120deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .advanced-button:hover {
+            transform: translateY(-4px);
+            background: linear-gradient(120deg, #2575fc, #6a11cb);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .advanced-button:disabled {
+            background: #ddd;
+            color: #aaa;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Indicador de clics */
+        .counter {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        /* Mensaje final */
+        .final-message {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        class ComponenteDinamico {
+            constructor(maxClicks = 5) {
+                this.maxClicks = maxClicks;
+                this.clicks = 0;
+
+                // Crear elementos internos del componente
+                this.container = document.createElement("div");
+                this.container.className = "dynamic-component";
+
+                this.button = document.createElement("button");
+                this.button.className = "advanced-button";
+                this.button.textContent = "Haz clic en mí";
+                this.button.addEventListener("click", () => this.handleClick());
+
+                this.counter = document.createElement("p");
+                this.counter.className = "counter";
+                this.counter.textContent = `Clics: ${this.clicks}`;
+
+                this.finalMessage = document.createElement("p");
+                this.finalMessage.className = "final-message";
+                this.finalMessage.textContent = "¡Has alcanzado el máximo de clics!";
+
+                // Añadir elementos al contenedor
+                this.container.appendChild(this.button);
+                this.container.appendChild(this.counter);
+                this.container.appendChild(this.finalMessage);
+            }
+
+            handleClick() {
+                this.clicks++;
+
+                // Actualizar contador y texto del botón
+                this.counter.textContent = `Clics: ${this.clicks}`;
+                this.button.textContent = `¡Clic número ${this.clicks}!`;
+
+                // Deshabilitar botón si alcanza el máximo de clics
+                if (this.clicks >= this.maxClicks) {
+                    this.button.disabled = true;
+                    this.button.textContent = "Deshabilitado";
+                    this.finalMessage.style.display = "block";
+                }
+            }
+
+            render(parentElement) {
+                parentElement.appendChild(this.container);
+            }
+        }
+
+        // Crear e insertar el componente en el body
+        const componente = new ComponenteDinamico(5);
+        componente.render(document.body);
+
+        const componente2 = new ComponenteDinamico(15);
+        componente2.render(document.body);
+    </script>
+</body>
+
+</html>
