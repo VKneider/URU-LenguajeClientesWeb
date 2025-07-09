@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modo Claro/Oscuro con LocalStorage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            transition: background 0.3s, color 0.3s;
+            text-align: center;
+            padding: 20px;
+        }
+        .dark-mode {
+            background: #1e1e1e;
+            color: white;
+        }
+        .light-mode {
+            background: #ffffff;
+            color: black;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+        .dark-mode button {
+            background: #ffffff;
+            color: #000;
+        }
+        .light-mode button {
+            background: #000;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🌗 Modo Claro/Oscuro</h1>
+    <button id="toggleTheme">Cambiar Tema</button>
+
+    <script>
+        const body = document.body;
+        const btnToggle = document.getElementById("toggleTheme");
+
+        // 📌 Función para cambiar el tema y guardarlo en LocalStorage
+        function cambiarTema() {
+            const modoActual = body.classList.contains("dark-mode") ? "light-mode" : "dark-mode";
+            body.className = modoActual;
+            localStorage.setItem("tema", modoActual);
+        }
+
+        // 📌 Cargar tema guardado en LocalStorage al iniciar
+        function cargarTema() {
+            const temaGuardado = localStorage.getItem("tema") || "light-mode";
+            body.className = temaGuardado;
+        }
+
+        // ✅ Agregar Event Listener al botón
+        btnToggle.addEventListener("click", cambiarTema);
+
+        // ✅ Cargar tema al abrir la página
+        cargarTema();
+    </script>
+
+</body>
+</html>

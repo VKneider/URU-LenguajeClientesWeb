@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LocalStorage e IndexedDB</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 20px;
+      line-height: 1.6;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #222;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 10px;
+      overflow-x: auto;
+      border-radius: 5px;
+    }
+    code {
+      font-family: Consolas, monospace;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px;
+      margin-top: 10px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+    input {
+      padding: 8px;
+      width: 100%;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #555;
+    }
+    a {
+      color: #007BFF;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>LocalStorage e IndexedDB</h1>
+    <p>Aprende cómo almacenar datos en el navegador con <strong>LocalStorage</strong> e <strong>IndexedDB</strong>, utilizando ejemplos interactivos.</p>
+
+    <h2>LocalStorage</h2>
+    <p>LocalStorage permite almacenar datos clave-valor de manera persistente en el navegador.</p>
+    <p><em>Ejemplo: Guarda y recupera un nombre.</em></p>
+    <input type="text" id="nombreInput" placeholder="Escribe tu nombre">
+    <button class="btn" onclick="guardarNombre()">Guardar</button>
+    <button class="btn" onclick="mostrarNombre()">Mostrar</button>
+    <button class="btn" onclick="borrarNombre()">Eliminar</button>
+    <p><strong>Resultado:</strong> <span id="resultadoLocalStorage">Nada aún.</span></p>
+
+    <pre><code>
+// Guardar un valor
+localStorage.setItem("nombre", "Juan");
+
+// Recuperar un valor
+let nombre = localStorage.getItem("nombre");
+
+// Eliminar un valor
+localStorage.removeItem("nombre");
+    </code></pre>
+    <p>Más información: <a href="https://developer.mozilla.org/es/docs/Web/API/Window/localStorage" target="_blank">Documentación de LocalStorage</a></p>
+
+    <h2>IndexedDB</h2>
+    <p>IndexedDB permite almacenar datos estructurados de forma asincrónica.</p>
+    <p><em>Ejemplo: Agregar y recuperar usuarios.</em></p>
+    <input type="text" id="userInput" placeholder="Nombre de usuario">
+    <button class="btn" onclick="agregarUsuario()">Agregar Usuario</button>
+    <button class="btn" onclick="mostrarUsuarios()">Mostrar Usuarios</button>
+    <p><strong>Usuarios en la base de datos:</strong></p>
+    <ul id="listaUsuarios"></ul>
+
+    <pre><code>
+// Abrir una base de datos
+let db;
+let request = indexedDB.open("MiDB", 1);
+
+request.onupgradeneeded = function(event) {
+  db = event.target.result;
+  db.createObjectStore("usuarios", { keyPath: "id", autoIncrement: true });
+};
+
+// Agregar usuario
+function agregarUsuario(nombre) {
+  let transaction = db.transaction(["usuarios"], "readwrite");
+  let store = transaction.objectStore("usuarios");
+  store.add({ nombre: nombre });
+}
+    </code></pre>
+    <p>Más información: <a href="https://developer.mozilla.org/es/docs/Web/API/IndexedDB_API" target="_blank">Documentación de IndexedDB</a></p>
+  </div>
+
+  <footer>
+    <p>Basado en la documentación oficial de MDN.</p>
+  </footer>
+
+  <script>
+    // LocalStorage
+    function guardarNombre() {
+      let nombre = document.getElementById("nombreInput").value;
+      if (nombre) {
+        localStorage.setItem("nombre", nombre);
+        alert("Nombre guardado en LocalStorage.");
+      }
+    }
+
+    function mostrarNombre() {
+      let nombre = localStorage.getItem("nombre");
+      document.getElementById("resultadoLocalStorage").innerText = nombre ? nombre : "No hay datos guardados.";
+    }
+
+    function borrarNombre() {
+      localStorage.removeItem("nombre");
+      document.getElementById("resultadoLocalStorage").innerText = "Nada aún.";
+      alert("Nombre eliminado de LocalStorage.");
+    }
+
+    // IndexedDB
+    let db;
+    let request = indexedDB.open("MiDB", 1);
+
+    request.onupgradeneeded = function(event) {
+      db = event.target.result;
+      db.createObjectStore("usuarios", { keyPath: "id", autoIncrement: true });
+    };
+
+    request.onsuccess = function(event) {
+      db = event.target.result;
+    };
+
+    function agregarUsuario() {
+      let nombre = document.getElementById("userInput").value;
+      if (!nombre) {
+        alert("Introduce un nombre de usuario.");
+        return;
+      }
+
+      let transaction = db.transaction(["usuarios"], "readwrite");
+      let store = transaction.objectStore("usuarios");
+      store.add({ nombre: nombre });
+
+      transaction.oncomplete = function() {
+        alert("Usuario agregado.");
+        document.getElementById("userInput").value = "";
+      };
+    }
+
+    function mostrarUsuarios() {
+      let transaction = db.transaction(["usuarios"], "readonly");
+      let store = transaction.objectStore("usuarios");
+      let request = store.getAll();
+
+      request.onsuccess = function() {
+        let lista = document.getElementById("listaUsuarios");
+        lista.innerHTML = "";
+        request.result.forEach(usuario => {
+          let li = document.createElement("li");
+          li.textContent = usuario.nombre;
+          lista.appendChild(li);
+        });
+      };
+    }
+  </script>
+</body>
+</html>

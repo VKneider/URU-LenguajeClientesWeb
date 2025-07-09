@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IndexedDB en JavaScript</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 20px;
+      line-height: 1.6;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #222;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 10px;
+      overflow-x: auto;
+      border-radius: 5px;
+    }
+    code {
+      font-family: Consolas, monospace;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+    input {
+      padding: 8px;
+      width: 100%;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .output {
+      background: #eef;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+      font-weight: bold;
+      text-align: center;
+    }
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>IndexedDB en JavaScript</h1>
+    <p>Aprende a usar <strong>IndexedDB</strong> para almacenar datos estructurados en el navegador.</p>
+
+    <h2>🌟 Métodos de IndexedDB</h2>
+
+    <h3>1️⃣ Abrir o crear una base de datos</h3>
+    <pre><code>
+let request = indexedDB.open("MiBaseDeDatos", 1);
+request.onupgradeneeded = function(event) {
+    let db = event.target.result;
+    db.createObjectStore("usuarios", { keyPath: "id" });
+};
+    </code></pre>
+
+    <h3>2️⃣ Guardar un dato</h3>
+    <pre><code>
+let transaction = db.transaction(["usuarios"], "readwrite");
+let store = transaction.objectStore("usuarios");
+store.add({ id: 1, nombre: "Juan", edad: 30 });
+    </code></pre>
+
+    <h3>3️⃣ Obtener un dato</h3>
+    <pre><code>
+let request = store.get(1);
+request.onsuccess = function() {
+    console.log(request.result);
+};
+    </code></pre>
+
+    <h3>4️⃣ Eliminar un dato</h3>
+    <pre><code>
+store.delete(1);
+    </code></pre>
+
+    <h3>5️⃣ Limpiar toda la base de datos</h3>
+    <pre><code>
+store.clear();
+    </code></pre>
+
+    <h2>⚡ Ejemplo interactivo</h2>
+    <p>Prueba los métodos de IndexedDB:</p>
+
+    <h3>📌 Agregar un usuario</h3>
+    <input type="text" id="nombreInput" placeholder="Nombre">
+    <input type="number" id="edadInput" placeholder="Edad">
+    <button class="btn" onclick="agregarUsuario()">Agregar Usuario</button>
+
+    <h3>📌 Mostrar todos los usuarios</h3>
+    <button class="btn" onclick="mostrarUsuarios()">Mostrar Usuarios</button>
+    <div class="output" id="resultadoUsuarios">No hay datos guardados.</div>
+
+    <h3>📌 Eliminar usuario por ID</h3>
+    <input type="number" id="idInput" placeholder="ID a eliminar">
+    <button class="btn" onclick="eliminarUsuario()">Eliminar Usuario</button>
+
+    <h3>📌 Limpiar toda la base de datos</h3>
+    <button class="btn" onclick="limpiarDB()">Limpiar Todo</button>
+
+    <footer>
+      <p>Basado en la documentación oficial de MDN.</p>
+    </footer>
+  </div>
+
+  <script>
+    let db;
+
+    // Abrir la base de datos
+    let request = indexedDB.open("MiBaseDeDatos", 1);
+
+    request.onupgradeneeded = function(event) {
+      db = event.target.result;
+      if (!db.objectStoreNames.contains("usuarios")) {
+        db.createObjectStore("usuarios", { keyPath: "id" });
+      }
+    };
+
+    request.onsuccess = function(event) {
+      db = event.target.result;
+    };
+
+    request.onerror = function() {
+      console.error("Error al abrir la base de datos.");
+    };
+
+    /**
+     * Agregar un usuario
+     */
+    function agregarUsuario() {
+      let nombre = document.getElementById("nombreInput").value;
+      let edad = document.getElementById("edadInput").value;
+      if (nombre && edad) {
+        let transaction = db.transaction(["usuarios"], "readwrite");
+        let store = transaction.objectStore("usuarios");
+        let id = Date.now();
+        store.add({ id, nombre, edad });
+
+        document.getElementById("resultadoUsuarios").innerText = `Usuario agregado: ${nombre}, Edad: ${edad}`;
+      }
+    }
+
+    /**
+     * Mostrar todos los usuarios
+     */
+    function mostrarUsuarios() {
+      let transaction = db.transaction(["usuarios"], "readonly");
+      let store = transaction.objectStore("usuarios");
+      let request = store.openCursor();
+      let resultado = "Usuarios guardados:\n";
+
+      request.onsuccess = function(event) {
+        let cursor = event.target.result;
+        if (cursor) {
+          resultado += `ID: ${cursor.value.id} - Nombre: ${cursor.value.nombre}, Edad: ${cursor.value.edad}\n`;
+          cursor.continue();
+        } else {
+          document.getElementById("resultadoUsuarios").innerText = resultado || "No hay usuarios guardados.";
+        }
+      };
+    }
+
+    /**
+     * Eliminar un usuario por ID
+     */
+    function eliminarUsuario() {
+      let id = parseInt(document.getElementById("idInput").value);
+      if (id) {
+        let transaction = db.transaction(["usuarios"], "readwrite");
+        let store = transaction.objectStore("usuarios");
+        store.delete(id);
+        document.getElementById("resultadoUsuarios").innerText = `Usuario con ID ${id} eliminado.`;
+      }
+    }
+
+    /**
+     * Limpiar la base de datos
+     */
+    function limpiarDB() {
+      let transaction = db.transaction(["usuarios"], "readwrite");
+      let store = transaction.objectStore("usuarios");
+      store.clear();
+      document.getElementById("resultadoUsuarios").innerText = "Todos los usuarios han sido eliminados.";
+    }
+  </script>
+</body>
+</html>

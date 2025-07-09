@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List con IndexedDB</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        h1 { color: #333; }
+        button { margin: 5px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+        #tareas { margin-top: 20px; background: white; padding: 10px; border-radius: 5px; }
+        .tarea { display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #ccc; }
+        .tarea button { background: red; }
+    </style>
+</head>
+<body>
+
+    <h1>📌 To-Do List con IndexedDB</h1>
+    
+    <input type="text" id="nuevaTarea" placeholder="Escribe una tarea...">
+    <button onclick="agregarTarea()">Agregar Tarea</button>
+
+    <h2>📋 Tareas:</h2>
+    <div id="tareas"></div>
+
+    <script>
+        let db;
+
+        // 🔹 Abrimos o creamos la base de datos
+        let request = indexedDB.open("TareasDB", 1);
+
+        request.onupgradeneeded = function(event) {
+            db = event.target.result;
+            db.createObjectStore("tareas", { keyPath: "id", autoIncrement: true });
+        };
+
+        request.onsuccess = function(event) {
+            db = event.target.result;
+            cargarTareas(); // 📥 Cargar tareas al iniciar la app
+        };
+
+        // 📌 Agregar una nueva tarea
+        function agregarTarea() {
+            let tareaTexto = document.getElementById("nuevaTarea").value;
+            if (!tareaTexto.trim()) return alert("Escribe una tarea");
+
+            let transaction = db.transaction(["tareas"], "readwrite");
+            let store = transaction.objectStore("tareas");
+
+            let request = store.add({ texto: tareaTexto });
+
+            request.onsuccess = () => { 
+                document.getElementById("nuevaTarea").value = "";
+                cargarTareas();
+            };
+        }
+
+        // 📌 Eliminar tarea por ID
+        function eliminarTarea(id) {
+            let transaction = db.transaction(["tareas"], "readwrite");
+            let store = transaction.objectStore("tareas");
+
+            let request = store.delete(id);
+            request.onsuccess = () => cargarTareas();
+        }
+
+        // 📌 Cargar y mostrar tareas
+        function cargarTareas() {
+            let transaction = db.transaction(["tareas"], "readonly");
+            let store = transaction.objectStore("tareas");
+
+            let request = store.getAll();
+            request.onsuccess = function(event) {
+                let tareas = event.target.result;
+                let lista = tareas.map(tarea => 
+                    `<div class="tarea">
+                        <span>${tarea.texto}</span>
+                        <button onclick="eliminarTarea(${tarea.id})">🗑️</button>
+                    </div>`).join("");
+
+                document.getElementById("tareas").innerHTML = lista || "<p>No hay tareas</p>";
+            };
+        }
+    </script>
+
+</body>
+</html>

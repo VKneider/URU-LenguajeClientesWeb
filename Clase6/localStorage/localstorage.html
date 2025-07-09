@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LocalStorage en JavaScript</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 20px;
+      line-height: 1.6;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #222;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 10px;
+      overflow-x: auto;
+      border-radius: 5px;
+    }
+    code {
+      font-family: Consolas, monospace;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+    input {
+      padding: 8px;
+      width: 100%;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .output {
+      background: #eef;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+      font-weight: bold;
+      text-align: center;
+    }
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>LocalStorage en JavaScript</h1>
+    <p>Aprende a usar <strong>localStorage</strong> para almacenar datos en el navegador de manera persistente.</p>
+
+    <h2>🌟 Métodos de localStorage</h2>
+
+    <h3>1️⃣ setItem() - Guardar datos</h3>
+    <p>Guarda un valor en localStorage usando una clave.</p>
+    <pre><code>localStorage.setItem("nombre", "Juan");</code></pre>
+
+    <h3>2️⃣ getItem() - Obtener datos</h3>
+    <p>Recupera un valor almacenado en localStorage.</p>
+    <pre><code>let nombre = localStorage.getItem("nombre");</code></pre>
+
+    <h3>3️⃣ removeItem() - Eliminar un dato</h3>
+    <p>Elimina un valor específico de localStorage.</p>
+    <pre><code>localStorage.removeItem("nombre");</code></pre>
+
+    <h3>4️⃣ clear() - Eliminar todos los datos</h3>
+    <p>Borra todo el contenido de localStorage.</p>
+    <pre><code>localStorage.clear();</code></pre>
+
+    <h3>5️⃣ JSON en localStorage</h3>
+    <p>localStorage solo almacena texto, por lo que para guardar objetos se usa <code>JSON.stringify()</code> y <code>JSON.parse()</code>.</p>
+    <pre><code>
+// Guardar objeto
+let persona = { nombre: "Ana", edad: 25 };
+localStorage.setItem("persona", JSON.stringify(persona));
+
+// Recuperar objeto
+let datos = JSON.parse(localStorage.getItem("persona"));
+    </code></pre>
+
+    <h2>⚡ Ejemplo interactivo</h2>
+    <p>Prueba los métodos de localStorage en esta sección:</p>
+
+    <h3>📌 Guardar un nombre</h3>
+    <input type="text" id="nombreInput" placeholder="Escribe tu nombre">
+    <button class="btn" onclick="guardarNombre()">Guardar Nombre</button>
+
+    <h3>📌 Mostrar el nombre guardado</h3>
+    <button class="btn" onclick="mostrarNombre()">Mostrar Nombre</button>
+    <div class="output" id="resultadoNombre">No hay datos guardados.</div>
+
+    <h3>📌 Eliminar nombre</h3>
+    <button class="btn" onclick="borrarNombre()">Eliminar Nombre</button>
+
+    <h3>📌 Guardar y mostrar un objeto</h3>
+    <p>{"Nombre": "Carlos", "Ciudad":"Madrid", "Edad":30}</p>
+    <button class="btn" onclick="guardarObjeto()">Guardar Objeto</button>
+    <button class="btn" onclick="mostrarObjeto()">Mostrar Objeto</button>
+    <div class="output" id="resultadoObjeto">No hay objeto guardado.</div>
+
+    <h3>📌 Limpiar todo</h3>
+    <button class="btn" onclick="limpiarLocalStorage()">Limpiar Todo</button>
+
+    <footer>
+      <p>Basado en la documentación oficial de MDN.</p>
+    </footer>
+  </div>
+
+  <script>
+    /**
+     * Guardar un nombre en localStorage
+     */
+    function guardarNombre() {
+      let nombre = document.getElementById("nombreInput").value;
+      if (nombre) {
+        localStorage.setItem("nombre", nombre);
+        document.getElementById("resultadoNombre").innerText = `Guardado: ${nombre}`;
+      }
+    }
+
+    /**
+     * Mostrar el nombre guardado
+     */
+    function mostrarNombre() {
+      let nombre = localStorage.getItem("nombre");
+      if (nombre) {
+        document.getElementById("resultadoNombre").innerText = `Nombre guardado: ${nombre}`;
+      } else {
+        document.getElementById("resultadoNombre").innerText = "No hay datos guardados.";
+      }
+    }
+
+    /**
+     * Eliminar el nombre guardado
+     */
+    function borrarNombre() {
+      localStorage.removeItem("nombre");
+      document.getElementById("resultadoNombre").innerText = "Nombre eliminado.";
+    }
+
+    /**
+     * Guardar un objeto en localStorage
+     */
+    function guardarObjeto() {
+      let persona = { nombre: "Carlos", edad: 30, ciudad: "Madrid" };
+      localStorage.setItem("persona", JSON.stringify(persona));
+      document.getElementById("resultadoObjeto").innerText = "Objeto guardado en localStorage.";
+    }
+
+    /**
+     * Mostrar el objeto almacenado
+     */
+    function mostrarObjeto() {
+      let datos = localStorage.getItem("persona");
+      if (datos) {
+        let persona = JSON.parse(datos);
+        document.getElementById("resultadoObjeto").innerText = `Nombre: ${persona.nombre}, Edad: ${persona.edad}, Ciudad: ${persona.ciudad}`;
+      } else {
+        document.getElementById("resultadoObjeto").innerText = "No hay objeto guardado.";
+      }
+    }
+
+    /**
+     * Limpiar todo el localStorage
+     */
+    function limpiarLocalStorage() {
+      localStorage.clear();
+      document.getElementById("resultadoNombre").innerText = "No hay datos guardados.";
+      document.getElementById("resultadoObjeto").innerText = "No hay objeto guardado.";
+    }
+  </script>
+</body>
+</html>

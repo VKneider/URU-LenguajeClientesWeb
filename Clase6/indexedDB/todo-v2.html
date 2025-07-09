@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List con IndexedDB y Event Listeners</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        h1 { color: #333; }
+        button { margin: 5px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+        #tareas { margin-top: 20px; background: white; padding: 10px; border-radius: 5px; }
+        .tarea { display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #ccc; }
+        .tarea button { background: red; }
+    </style>
+</head>
+<body>
+
+    <h1>📌 To-Do List con IndexedDB</h1>
+    
+    <input type="text" id="nuevaTarea" placeholder="Escribe una tarea...">
+    <button id="btnAgregar">Agregar Tarea</button>
+
+    <h2>📋 Tareas:</h2>
+    <div id="tareas"></div>
+
+    <script>
+        let db;
+
+        // 📌 Función para abrir la base de datos con Promesas
+        function abrirDB() {
+            return new Promise((resolve, reject) => {
+                let request = indexedDB.open("TareasDB", 1);
+
+                request.onupgradeneeded = (event) => {
+                    let db = event.target.result;
+                    db.createObjectStore("tareas", { keyPath: "id", autoIncrement: true });
+                };
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject("Error al abrir IndexedDB");
+            });
+        }
+
+        // 📌 Función para agregar una tarea con Promesas
+        async function agregarTarea() {
+            let tareaTexto = document.getElementById("nuevaTarea").value.trim();
+            if (!tareaTexto) return alert("Escribe una tarea");
+
+            try {
+                let db = await abrirDB();
+                let transaction = db.transaction(["tareas"], "readwrite");
+                let store = transaction.objectStore("tareas");
+
+                let request = store.add({ texto: tareaTexto });
+
+                request.onsuccess = () => {
+                    document.getElementById("nuevaTarea").value = "";
+                    cargarTareas();
+                };
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // 📌 Función para eliminar una tarea por ID
+        async function eliminarTarea(id) {
+            try {
+                let db = await abrirDB();
+                let transaction = db.transaction(["tareas"], "readwrite");
+                let store = transaction.objectStore("tareas");
+
+                let request = store.delete(id);
+                request.onsuccess = () => cargarTareas();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // 📌 Función para obtener todas las tareas
+        function obtenerTareas() {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    let db = await abrirDB();
+                    let transaction = db.transaction(["tareas"], "readonly");
+                    let store = transaction.objectStore("tareas");
+
+                    let request = store.getAll();
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject("Error al obtener tareas");
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+
+        // 📌 Función para cargar las tareas en pantalla
+        async function cargarTareas() {
+            try {
+                let tareas = await obtenerTareas();
+                let contenedor = document.getElementById("tareas");
+
+                if (tareas.length === 0) {
+                    contenedor.innerHTML = "<p>No hay tareas</p>";
+                    return;
+                }
+
+                contenedor.innerHTML = "";
+                
+                tareas.forEach(tarea => {
+                    let tareaElemento = document.createElement("div");
+                    tareaElemento.classList.add("tarea");
+                    tareaElemento.innerHTML = `<span>${tarea.texto}</span>`;
+                    
+                    let botonEliminar = document.createElement("button");
+                    botonEliminar.textContent = "🗑️";
+                    botonEliminar.dataset.id = tarea.id;
+
+                    // ✅ Agregar event listener dinámicamente al botón eliminar
+                    botonEliminar.addEventListener("click", (event) => {
+                        let id = parseInt(event.target.dataset.id);
+                        eliminarTarea(id);
+                    });
+
+                    tareaElemento.appendChild(botonEliminar);
+                    contenedor.appendChild(tareaElemento);
+                });
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // 📌 Cargar tareas al iniciar la app
+        window.addEventListener("load", cargarTareas);
+
+        // ✅ Agregar evento al botón Agregar
+        document.getElementById("btnAgregar").addEventListener("click", agregarTarea);
+    </script>
+
+</body>
+</html>
